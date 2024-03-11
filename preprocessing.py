@@ -9,9 +9,40 @@ def read_data(filename):
     
     return dataframe
 
-def sort_data(df):
+def sort_data(dataframe):
     """
     Takes the dataframe and sorts it by ANSP, returns data as the sorted dataframe
     """
-    SortedData = df.sort_values(['ENTITY_NAME','FLT_DATE'])
+    SortedData = dataframe.sort_values(['ENTITY_NAME','FLT_DATE'])
     return SortedData
+
+def ANSPs(SortedData):
+    """
+    Takes the sorted dataframe and returns a list of all of the ANSPs
+    """
+    ANSPs = []
+    for i in range(len(SortedData.loc[:,['ENTITY_NAME']])):
+        ANSP = SortedData.ENTITY_NAME[i]
+        if ANSP not in ANSPs:
+            ANSPs.append(ANSP)
+    return ANSPs
+
+def split_data(SortedData):
+    """
+    Takes the sorted dataframe and splits into seperate dataframes for each ANSP, returns a list containing all of these dataframes
+    """
+    ANSPsdf = [] 
+
+    for ANSP in ANSPs:
+        grouped = SortedData.groupby(SortedData.ENTITY_NAME)
+        ANSP = grouped.get_group(ANSP)
+        ANSPsdf.append(ANSP)
+    return ANSPsdf
+
+def get_data(ANSPName):
+    """
+    Takes a given ANSP name and returns the dataframe for that ANSP
+    """
+    ANSPIndex = ANSPs.index(ANSPName)
+    return ANSPsdf[ANSPIndex]
+
