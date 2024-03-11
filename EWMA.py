@@ -21,8 +21,7 @@ def CMA(df):
 
 # Weighted Moving Average (WMA)
 def WMA(df, period):
-    print(df.rolling(period))
-    return df.rolling(period)
+    return
 
 # Exponentially Weighted Moving Average (EWMA)
 def EWMA(df, period):
