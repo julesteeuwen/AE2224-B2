@@ -15,6 +15,6 @@ def read_csv_column(filename, column_index):
 
 # Example usage
 column_index = int(input("Enter the column index (0-based): "))
-filename = 'datasets/2014-2016.csv'  # Change this to the path of your CSV file
+filename = 'datasets/split_2014-2016.csv'  # Change this to the path of your CSV file
 column_data = read_csv_column(filename, column_index)
 print("Column data:", column_data)
