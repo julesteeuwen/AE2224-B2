@@ -1,11 +1,48 @@
 import pandas as pd
+import numpy as np
 
+def read_data(filename):
+    """
+    Reads all of the data from the file, returns the data as a dataframe
+    """
 
-df = pd.read_csv('Datasets/2014-2016.csv', index_col=0)
+    
+    return dataframe
 
-print (df)
+def sort_data(dataframe):
+    """
+    Takes the dataframe and sorts it by ANSP, returns data as the sorted dataframe
+    """
+    SortedData = dataframe.sort_values(['ENTITY_NAME','FLT_DATE'])
+    return SortedData
 
-#   You can now explore the loaded data using various DataFrame methods. For example, to display the first few rows of the DataFrame, use df.head():
+def ANSPs(SortedData):
+    """
+    Takes the sorted dataframe and returns a list of all of the ANSPs
+    """
+    ANSPs = []
+    for i in range(len(SortedData.loc[:,['ENTITY_NAME']])):
+        ANSP = SortedData.ENTITY_NAME[i]
+        if ANSP not in ANSPs:
+            ANSPs.append(ANSP)
+    return ANSPs
 
-  # python
-   #print(df.head())
+def split_data(SortedData, ANSPs):
+    """
+    Takes the sorted dataframe and splits into seperate dataframes for each ANSP, returns a list containing all of these dataframes
+    """
+    ANSPsdf = [] 
+
+    for ANSP in ANSPs:
+        grouped = SortedData.groupby(SortedData.ENTITY_NAME)
+        ANSP = grouped.get_group(ANSP)
+        ANSPsdf.append(ANSP)
+    return ANSPsdf
+
+def get_data(ANSPName, ANSPsdf, ANSPs):
+    """
+    Takes a given ANSP name and returns the dataframe for that ANSP
+    """
+    ANSPIndex = ANSPs.index(ANSPName)
+    return ANSPsdf[ANSPIndex]
+
