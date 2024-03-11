@@ -27,7 +27,7 @@ def ANSPs(SortedData):
             ANSPs.append(ANSP)
     return ANSPs
 
-def split_data(SortedData):
+def split_data(SortedData, ANSPs):
     """
     Takes the sorted dataframe and splits into seperate dataframes for each ANSP, returns a list containing all of these dataframes
     """
@@ -39,7 +39,7 @@ def split_data(SortedData):
         ANSPsdf.append(ANSP)
     return ANSPsdf
 
-def get_data(ANSPName):
+def get_data(ANSPName, ANSPsdf, ANSPs):
     """
     Takes a given ANSP name and returns the dataframe for that ANSP
     """
