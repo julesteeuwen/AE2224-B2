@@ -4,22 +4,30 @@ import numpy as np
 
 # Simple Moving Average (SMA)
 df = pd.read_csv('Datasets/AAPL.csv')
-df = df[['Date', 'Close']]
+df = df[['Close']]
 
 def SMA(df, period):
+    """ Adds a column 'SMA' with the moving averages using the given period"""
     
-    # Split the data into timeframes with period datapoints.
-    df['MA'] = df[['Close']].rolling(period).mean()
+    df['SMA'] = df.rolling(period).mean()
 
-    # Calculate the average for each timeframe
     return df
 
-print(SMA(df, 5))
+# Cumulative Moving Average (CMA)
+def CMA(df):
 
+    df['CMA'] = df.rolling().expanding().mean()
 
+    return df
 
 # Weighted Moving Average (WMA)
-    
+def WMA(df, period):
 
+    return df
 
 # Exponentially Weighted Moving Average (EWMA)
+def EWMA(df, period):
+
+    df['EWMA'] = df.rolling(period).ewm(period).mean()
+
+    return df
