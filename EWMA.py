@@ -2,13 +2,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-# preprocessing to make dates "date" data type
-def date(df):
-    
-    
-    
-    return
-
 # Simple Moving Average (SMA)
 def SMA(df, period):
     """ Adds a column 'SMA' with the moving averages using the given period"""
@@ -40,8 +33,13 @@ df[['EWMA']] = EWMA(df_close, 10)
 
 
 # Plotting data
+df = df[['Date', 'Close', 'SMA', 'CMA', 'EWMA']]
+
+df['Date'] = pd.to_datetime(df['Date'], format = '%Y-%m-%d')
+
+df.set_index(['Date'], inplace = True)
+
 print(df)
-df = df[['Close', 'SMA', 'CMA', 'EWMA']]
 df.plot()
 print(df.dtypes)
 plt.show()
