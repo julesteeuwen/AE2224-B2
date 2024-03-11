@@ -38,6 +38,8 @@ def EWMA(df, period):
 
     df['EWMA'] = df.rolling(period).ewm(period).mean()
 
+    return df
+
 # Plotting data
 print(df)
 x = [0, 1, 2, 3]
@@ -46,5 +48,3 @@ df.plot()
 print(df.dtypes)
 plt.show()
 
-
-    return df
