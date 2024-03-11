@@ -2,7 +2,7 @@ import pandas as pd
 
 def read_data(filename):
     """
-    Read all of the data from the file
+    Reads all of the data from the file, returns the data as a dataframe
     """
 
     
