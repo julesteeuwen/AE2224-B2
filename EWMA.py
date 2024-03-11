@@ -1,25 +1,48 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
+# preprocessing to make dates "date" data type
+def date(df):
+    
+    
+    
+    return
 
 # Simple Moving Average (SMA)
-df = pd.read_csv('Datasets/AAPL.csv')
-df = df[['Date', 'Close']]
-
 def SMA(df, period):
-    
-    # Split the data into timeframes with period datapoints.
-    df['MA'] = df[['Close']].rolling(period).mean()
-
-    # Calculate the average for each timeframe
-    return df
-
-print(SMA(df, 5))
+    """ Adds a column 'SMA' with the moving averages using the given period"""
+    return df.rolling(period).mean()
 
 
+# Cumulative Moving Average (CMA)
+def CMA(df):
+    return df.expanding().mean()
 
 # Weighted Moving Average (WMA)
-    
-
+def WMA(df, period):
+    print(df.rolling(period))
+    return df.rolling(period)
 
 # Exponentially Weighted Moving Average (EWMA)
+def EWMA(df, period):
+    return df.ewm(span=period).mean()
+
+
+
+# Importing data
+df = pd.read_csv('Datasets/AAPL.csv')
+df_close = df[['Close']]
+
+df[['SMA']] = SMA(df_close, 10)
+df[['CMA']] = CMA(df_close)
+df[['EWMA']] = EWMA(df_close, 10)
+
+
+# Plotting data
+print(df)
+df = df[['Close', 'SMA', 'CMA', 'EWMA']]
+df.plot()
+print(df.dtypes)
+plt.show()
+
