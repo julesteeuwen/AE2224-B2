@@ -1,34 +1,20 @@
 import pandas as pd
 import numpy as np
-import math
+
 def read_data(filename):
     """
     Reads all of the data from the file, returns the data as a dataframe
     """
-    dataframe = pd.read_csv(filename)
-
+    dataframe = pd.read_csv(filename, index_col= 'FLT_DATE',parse_dates=True, date_format='%d-%m-%Y')
     
     return dataframe
-
-def sort_data(dataframe):
-    """
-    Takes the dataframe and sorts it by ANSP, returns data as the sorted dataframe
-    """
-    SortedData = dataframe.sort_values(['ENTITY_NAME','FLT_DATE'])
-    return SortedData
 
 def ANSPs(SortedData):
     """
     Takes the sorted dataframe and returns a list of all of the ANSPs
     """
     ANSPs = []
-    for i in range(len(SortedData.loc[:,['ENTITY_NAME']])):
-        ANSP = SortedData.ENTITY_NAME[i]
-        if ANSP not in ANSPs:
-            if ANSP != "nan":
-                ANSPs.append(ANSP)
-   # ANSPs = [x for x in ANSPs if str(x) != 'nan']
-    return ANSPs
+    return SortedData.ENTITY_NAME.unique()
 
 def cleanlist(list):
     list = [x for x in list if str(x) != 'nan']
@@ -54,5 +40,5 @@ def get_data(ANSPName, ANSPsdf, ANSPs):
         print('Invalid ANSP name')
         ANSPName = input('Input correct ANSP name')
     ANSPIndex = ANSPs.index(ANSPName)
-    return ANSPsdf[ANSPIndex]
+    return ANSPsdf[ANSPIndex], ANSPName
 
