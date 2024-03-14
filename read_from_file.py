@@ -25,9 +25,9 @@ def read_csv_column(filename, column_index, service_provider):
 
 #service_provider = input("Enter air service provider")  #has to be an existing one, written exactly as in the data excel
 def graphdata(data, ANSPName):
-    start_date = datetime.date(2014, 1, 1)
-    end_date = datetime.date(2016, 12, 31)
-    dates = [start_date + datetime.timedelta(days=i) for i in range((end_date - start_date).days + 1)]
+    # start_date = datetime.date(2014, 1, 1)
+    # end_date = datetime.date(2016, 12, 31)
+    # dates = [start_date + datetime.timedelta(days=i) for i in range((end_date - start_date).days + 1)]
     print("For vertical interactions type \"1\" and then press ENTER")
     print("For horisontal interactions type \"2\" and then press ENTER")
     print("For speed interactions type \"3\" and then press ENTER")
@@ -50,8 +50,7 @@ def graphdata(data, ANSPName):
     #filename = 'datasets/split_2014-2016.csv'  # Change this to the path of your CSV file
     #column_data = read_csv_column(filename, choice, service_provider)
     column_data = data[choice]
-    print(column_data)
-    plt.plot(dates,column_data)
+    column_data.plot()
     plt.xlabel('Time')
     plt.ylabel(lable)
     plt.title(title)
