@@ -5,6 +5,7 @@ def read_data(filename):
     """
     Reads all of the data from the file, returns the data as a dataframe
     """
+    dataframe = pd.read_csv(filename)
 
     
     return dataframe
@@ -43,6 +44,10 @@ def get_data(ANSPName, ANSPsdf, ANSPs):
     """
     Takes a given ANSP name and returns the dataframe for that ANSP
     """
-    ANSPIndex = ANSPs.index(ANSPName)
+    if ANSPName not in ANSPs:
+        print('Invalid ANSP name')
+        ANSPName = input('Input correct ANSP name')
+    else:
+        ANSPIndex = ANSPs.index(ANSPName)
     return ANSPsdf[ANSPIndex]
 
