@@ -1,11 +1,12 @@
 import pandas as pd
 import numpy as np
+import statsmodels as sm
 
 def read_data(filename):
     """
     Reads all of the data from the file, returns the data as a dataframe
     """
-
+    
     
     return dataframe
 
@@ -46,3 +47,8 @@ def get_data(ANSPName, ANSPsdf, ANSPs):
     ANSPIndex = ANSPs.index(ANSPName)
     return ANSPsdf[ANSPIndex]
 
+def Fuller_test():
+    read_data()
+    pd.DataFrame["Month"] = pd.to_datetime(pd.DataFrame["Month"])
+
+print(pd.DataFrame["Month"])
