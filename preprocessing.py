@@ -6,8 +6,7 @@ def read_data(filename):
     """
     Reads all of the data from the file, returns the data as a dataframe
     """
-    
-    
+    dataframe = pd.read_csv(filename)
     return dataframe
 
 def sort_data(dataframe):
@@ -44,11 +43,15 @@ def get_data(ANSPName, ANSPsdf, ANSPs):
     """
     Takes a given ANSP name and returns the dataframe for that ANSP
     """
-    ANSPIndex = ANSPs.index(ANSPName)
+    if ANSPName not in ANSPs:
+        print('Invalid ANSP name')
+        ANSPName = input('Input correct ANSP name')
+    else:
+        ANSPIndex = ANSPs.index(ANSPName)
     return ANSPsdf[ANSPIndex]
 
 def Fuller_test():
     read_data()
     pd.DataFrame["Month"] = pd.to_datetime(pd.DataFrame["Month"])
 
-print(pd.DataFrame["Month"])
+dataframe = read_data('Datasets/AAPL.csv')
