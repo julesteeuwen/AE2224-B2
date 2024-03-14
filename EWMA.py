@@ -41,11 +41,10 @@ df = pd.read_csv('Datasets/split_2014-2016.csv', index_col='FLT_DATE', parse_dat
 df.dropna(inplace=True)
 
 # Filtering data and selecting an ANSP
-df_vert = df["VERTICAL_INTER_HRS"]
+df_vert = df["VERTICAL_INTER_HRS"].to_frame()
 df_ansp = df_vert.loc[df['ENTITY_NAME'] == 'Skyguide']
 df_ansp.index.freq = pd.infer_freq(df_ansp.index)
 
-df_ansp
 
 plot_decompose(df_ansp)
 plt.show()
