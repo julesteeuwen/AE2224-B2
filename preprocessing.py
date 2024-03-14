@@ -14,7 +14,7 @@ def sort_data(dataframe):
     """
     Takes the dataframe and sorts it by ANSP, returns data as the sorted dataframe
     """
-    SortedData = dataframe.sort_values(['ENTITY_NAME','FLT_DATE'])
+    SortedData = dataframe.sort_values(['ENTITY_NAME', 'YEAR', 'MONTH_NUM', 'FLT_DATE'])
     return SortedData
 
 def ANSPs(SortedData):

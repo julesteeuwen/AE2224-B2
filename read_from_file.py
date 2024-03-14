@@ -37,15 +37,15 @@ def graphdata(data, ANSPName):
     if choice == "1":
         choice = 'VERTICAL_INTER_HRS'
         lable = 'Vertical Interactions'
-        title = 'Vertical Interactions with time' + ANSPName
+        title = ANSPName + ' Vertical Interactions with time'
     elif choice == "2":
         choice = 'HORIZ_INTER_HRS'
         lable = 'Horizontal Interactions'
-        title = 'Horizontal Interactions with time' + ANSPName
+        title = ANSPName + ' Horizontal Interactions with time' 
     else:
         choice = 'SPEED_INTER_HRS'
         lable = 'Speed Interactions'
-        title = 'Speed Interactions with time' + ANSPName
+        title = ANSPName + ' speed Interactions with time' 
 
     #filename = 'datasets/split_2014-2016.csv'  # Change this to the path of your CSV file
     #column_data = read_csv_column(filename, choice, service_provider)
