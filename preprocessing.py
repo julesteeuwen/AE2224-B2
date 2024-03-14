@@ -44,6 +44,9 @@ def get_data(ANSPName, ANSPsdf, ANSPs):
     """
     Takes a given ANSP name and returns the dataframe for that ANSP
     """
+    while ANSPName not in ANSPs:
+        print('Invalid ANSP name')
+        ANSPName = input('Input correct ANSP name')
     ANSPIndex = ANSPs.index(ANSPName)
     return ANSPsdf[ANSPIndex]
 
