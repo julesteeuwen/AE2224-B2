@@ -55,3 +55,4 @@ def Fuller_test():
     pd.DataFrame["Month"] = pd.to_datetime(pd.DataFrame["Month"])
 
 dataframe = read_data('Datasets/AAPL.csv')
+print(dataframe.head())
