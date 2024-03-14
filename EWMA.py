@@ -45,13 +45,11 @@ df_vert = df["VERTICAL_INTER_HRS"].to_frame()
 df_ansp = df_vert.loc[df['ENTITY_NAME'] == 'Skyguide']
 df_ansp.index.freq = pd.infer_freq(df_ansp.index)
 
-
 plot_decompose(df_ansp)
-plt.show()
 
-df_ansp[['SMA']] = SMA(df_ansp, 10)
-df_ansp[['CMA']] = CMA(df_ansp)
-df_ansp[['EWMA']] = EWMA(df_ansp, 10)
+df_ansp.loc[:, "SMA"] = SMA(df_ansp, 50)
+df_ansp.loc[:, "CMA"] = CMA(df_ansp[['VERTICAL_INTER_HRS']])
+df_ansp.loc[:, "EWMA"] = EWMA(df_ansp[['VERTICAL_INTER_HRS']], 50)
 
 df_ansp.plot()
 plt.show()
