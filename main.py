@@ -11,14 +11,14 @@ ANSPs = cleanlist(ANSPs)
 ANSPsdf = split_data(TrafficData1, ANSPs)
 ANSPName = input("Which ANSP would you want data from?")
 data, ANSPName = get_data(ANSPName, ANSPsdf, ANSPs)
-graphdata(data, ANSPName)
 
 
-#data = calculate_scores_daily(data)
+
+data = calculate_scores_daily(data)
 #data = calculate_scores_monthly(data)
-data = calculate_scores_yearly(data)
+#data = calculate_scores_yearly(data)
 
 
-print(data)
+#print(data)
 
-
+graphdata(data, ANSPName)
