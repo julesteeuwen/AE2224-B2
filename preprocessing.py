@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import math
+
 def read_data(filename):
     """
     Reads all of the data from the file, returns the data as a dataframe
@@ -13,7 +13,7 @@ def sort_data(dataframe):
     """
     Takes the dataframe and sorts it by ANSP, returns data as the sorted dataframe
     """
-    SortedData = dataframe.sort_values(['ENTITY_NAME','FLT_DATE'])
+    SortedData = dataframe.sort_values(['ENTITY_NAME', 'YEAR', 'MONTH_NUM', 'FLT_DATE'])
     return SortedData
 
 def ANSPs(SortedData):
@@ -24,8 +24,7 @@ def ANSPs(SortedData):
     for i in range(len(SortedData.loc[:,['ENTITY_NAME']])):
         ANSP = SortedData.ENTITY_NAME[i]
         if ANSP not in ANSPs:
-            if ANSP != "nan":
-                ANSPs.append(ANSP)
+            ANSPs.append(ANSP)
    # ANSPs = [x for x in ANSPs if str(x) != 'nan']
     return ANSPs
 
@@ -53,5 +52,5 @@ def get_data(ANSPName, ANSPsdf, ANSPs):
         print('Invalid ANSP name')
         ANSPName = input('Input correct ANSP name')
     ANSPIndex = ANSPs.index(ANSPName)
-    return ANSPsdf[ANSPIndex]
+    return ANSPsdf[ANSPIndex], ANSPName
 
