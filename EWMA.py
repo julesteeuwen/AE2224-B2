@@ -4,20 +4,22 @@ import matplotlib.pyplot as plt
 
 # Simple Moving Average (SMA)
 def SMA(df, period):
-    """ Adds a column 'SMA' with the moving averages using the given period"""
+    """ Returns a dataframe containing the Simple Moving Averages over the given dataframe using the given period """
     return df.rolling(period).mean()
-
 
 # Cumulative Moving Average (CMA)
 def CMA(df):
+    """ Returns a dataframe containing the Cumulative Moving Averages over the given dataframe """
     return df.expanding().mean()
 
 # Weighted Moving Average (WMA)
 def WMA(df, period):
+    """ Returns a dataframe containing the (Linearly) Weighted Moving Averages over the given dataframe using the given period """
     return
 
 # Exponentially Weighted Moving Average (EWMA)
 def EWMA(df, period):
+    """ Returns a dataframe containing the Exponentially Weighted Moving Averages over the given dataframe using the given period """
     return df.ewm(span=period).mean()
 
 
