@@ -27,7 +27,7 @@ def EWMA(df, period):
     return df.ewm(span=period).mean()
 
 def plot_decompose(df):
-    result = seasonal_decompose(df, model='multiplicative')
+    result = seasonal_decompose(df, model='multiplicative', period=365)
     result.plot()
     plt.show()
     return
@@ -42,22 +42,17 @@ df.dropna(inplace=True)
 
 # Filtering data and selecting an ANSP
 df_vert = df["VERTICAL_INTER_HRS"]
-df_skyguide = df_vert.loc[df['ENTITY_NAME'] == 'Skyguide']
+df_skyguide = df_vert.loc[df['ENTITY_NAME'] == 'ROMATSA']
 
 df_skyguide.index.freq = pd.infer_freq(df_skyguide.index)
 
 plot_decompose(df_skyguide)
+plt.show()
 
-# df[['SMA']] = SMA(df_close, 10)
-# df[['CMA']] = CMA(df_close)
-# df[['EWMA']] = EWMA(df_close, 10)
+df_skyguide[['SMA']] = SMA(df_skyguide, 10)
+df_skyguide[['CMA']] = CMA(df_skyguide)
+df_skyguide[['EWMA']] = EWMA(df_skyguide, 10)
 
-
-# plot_decompose(df_close)
-
-# Plotting data
-# df = df[['Close', 'SMA', 'CMA', 'EWMA']]
-
-# df.plot()
-# plt.show()
+df_skyguide.plot()
+plt.show()
 
