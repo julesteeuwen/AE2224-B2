@@ -27,7 +27,7 @@ dates = [start_date + datetime.timedelta(days=i) for i in range((end_date - star
 
 service_provider = input("Enter air service provider")  #has to be an existing one, written exactly as in the data excel
 print("For vertical interactions type \"1\" and then press ENTER")
-print("For horisontal interactions type \"2\" and then press ENTER")
+print("For horizontal interactions type \"2\" and then press ENTER")
 print("For speed interactions type \"3\" and then press ENTER")
 choice = input("Type your choice:")
 while choice not in ["1","2","3"]:
