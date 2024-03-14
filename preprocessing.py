@@ -52,8 +52,9 @@ def Fuller_test(dataframe, parameter, plotting=False):
     """
     Checks if the parameter is stationary, returns True of stationary, False if not
     """
-    dataframe["FLT_Date"] = pd.to_datetime(dataframe["FLT_DATE"], format=r"%d-%m-%Y")   
-    dataframe.index = dataframe["FLT_Date"]
+    dataframe.dropna()
+    #dataframe["FLT_Date"] = pd.to_datetime(dataframe["FLT_DATE"], format=r"%d-%m-%Y")   
+    #dataframe.index = dataframe["FLT_Date"]
     rolling_mean = dataframe[parameter].rolling(15).mean()
     print(rolling_mean)
     rolling_std = dataframe[parameter].rolling(15).std()
