@@ -3,6 +3,7 @@ import numpy as np
 import statsmodels as sm
 import matplotlib.pyplot as plt
 import seaborn as sns
+from statsmodels.tsa.stattools import adfuller
 
 def read_data(filename):
     """
@@ -53,32 +54,40 @@ def get_data(ANSPName, ANSPsdf, ANSPs):
         ANSPIndex = ANSPs.index(ANSPName)
     return ANSPsdf[ANSPIndex]
 
-def Fuller_test(dataframe, parameter):
+def Fuller_test(dataframe, parameter, plotting=False):
     """
     Checks if the parameter is stationary, returns True of stationary, False if not
     """
     dataframe["FLT_Date"] = pd.to_datetime(dataframe["FLT_DATE"], format=r"%d-%m-%Y")   
     dataframe.index = dataframe["FLT_Date"]
-    rolling_mean = dataframe[parameter].rolling(7).mean()
+    rolling_mean = dataframe[parameter].rolling(15).mean()
     print(rolling_mean)
-    rolling_std = dataframe[parameter].rolling(7).std()
+    rolling_std = dataframe[parameter].rolling(15).std()
+    '''
     error_mean = 0
     error_std = 0
     for i in range(12,len(dataframe[parameter])):
         error_mean += (dataframe[parameter][i] - rolling_mean[i])
         error_std += (dataframe[parameter][i] - rolling_std[i])
     print(f"mean error = {error_mean/len(dataframe[parameter])}, std error = {error_std/len(dataframe[parameter])}")
-
-
-    plt.plot(np.array(dataframe["FLT_Date"].values), np.array(dataframe[parameter].values), label='Data', color = "red")
-    plt.plot(rolling_mean, color = "blue", label = "Rolling Mean")
-    plt.plot(rolling_std, color = "green", label = "Rolling Std")
-    plt.legend(loc = "best")
-    plt.draw()
-    plt.show()
+    '''
+    if plotting:
+        plt.plot(np.array(dataframe["FLT_Date"].values), np.array(dataframe[parameter].values), label='Data', color = "red")
+        plt.plot(rolling_mean, color = "blue", label = "Rolling Mean")
+        plt.plot(rolling_std, color = "green", label = "Rolling Std")
+        plt.legend(loc = "best")
+        plt.draw()
+        plt.show()
+    adft = adfuller(np.array(dataframe[parameter].values), autolag='AIC')
+    if adft[1] < 0.05:
+        print(f"{parameter} is stationary")
+        return True
+    else:
+        print(f"{parameter} is not stationary")
+        return False
 
 dataframe = read_data('Datasets/split_2014-2016.csv')
-dataframe = dataframe[dataframe['ENTITY_NAME'] == "ENAV"]
+dataframe = dataframe[dataframe['ENTITY_NAME'] == "LVNL"]
 Fuller_test(dataframe, "CPLX_FLIGHT_HRS")
 
 
