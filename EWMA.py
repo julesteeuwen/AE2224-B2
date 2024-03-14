@@ -42,17 +42,18 @@ df.dropna(inplace=True)
 
 # Filtering data and selecting an ANSP
 df_vert = df["VERTICAL_INTER_HRS"]
-df_skyguide = df_vert.loc[df['ENTITY_NAME'] == 'ROMATSA']
+df_ansp = df_vert.loc[df['ENTITY_NAME'] == 'Skyguide']
+df_ansp.index.freq = pd.infer_freq(df_ansp.index)
 
-df_skyguide.index.freq = pd.infer_freq(df_skyguide.index)
+df_ansp
 
-plot_decompose(df_skyguide)
+plot_decompose(df_ansp)
 plt.show()
 
-df_skyguide[['SMA']] = SMA(df_skyguide, 10)
-df_skyguide[['CMA']] = CMA(df_skyguide)
-df_skyguide[['EWMA']] = EWMA(df_skyguide, 10)
+df_ansp[['SMA']] = SMA(df_ansp, 10)
+df_ansp[['CMA']] = CMA(df_ansp)
+df_ansp[['EWMA']] = EWMA(df_ansp, 10)
 
-df_skyguide.plot()
+df_ansp.plot()
 plt.show()
 
