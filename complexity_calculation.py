@@ -24,13 +24,16 @@ def calculate_scores_monthly(data):
     group_month = data.groupby(['YEAR', 'MONTH_NUM']).sum()
 
     
-
-    
-
     #Calculate scores for given month
 
-    
-    
     return calculate_scores_daily(group_month)
 
+def calculate_scores_yearly(data):
+    #Group by year and month
+    data = data.drop(columns = ['MONTH_MON', 'FLT_DATE', 'ENTITY_TYPE', 'ENTITY_NAME', 'MONTH_NUM'])
+    group_year = data.groupby('YEAR').sum()
 
+    
+    #Calculate scores for given month
+
+    return calculate_scores_daily(group_year)
