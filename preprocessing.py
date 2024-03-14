@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-
+import math
 def read_data(filename):
     """
     Reads all of the data from the file, returns the data as a dataframe
@@ -25,8 +25,14 @@ def ANSPs(SortedData):
     for i in range(len(SortedData.loc[:,['ENTITY_NAME']])):
         ANSP = SortedData.ENTITY_NAME[i]
         if ANSP not in ANSPs:
-            ANSPs.append(ANSP)
+            if ANSP != "nan":
+                ANSPs.append(ANSP)
+   # ANSPs = [x for x in ANSPs if str(x) != 'nan']
     return ANSPs
+
+def cleanlist(list):
+    list = [x for x in list if str(x) != 'nan']
+    return list
 
 def split_data(SortedData, ANSPs):
     """
