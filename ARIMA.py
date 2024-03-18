@@ -6,7 +6,7 @@ import sklearn as sk
 
 #read file and and chosse parameters to predict
 data = pd.read_csv('Datasets/AAPL.csv')
-Predictor = data['Close']
+Predictor = data['Open']
 Time = data['Date']
 
 #reshape dataframe to numpy array
