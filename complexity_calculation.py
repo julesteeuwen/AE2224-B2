@@ -20,7 +20,7 @@ def calculate_scores_daily(data):
 
 def calculate_scores_monthly(data):
     #Group by year and month
-    data = data.drop(columns = ['MONTH_MON', 'FLT_DATE', 'ENTITY_TYPE', 'ENTITY_NAME'])
+    data = data.drop(columns = ['MONTH_MON', 'ENTITY_TYPE', 'ENTITY_NAME'])
     group_month = data.groupby(['YEAR', 'MONTH_NUM']).sum()
 
     
@@ -30,7 +30,7 @@ def calculate_scores_monthly(data):
 
 def calculate_scores_yearly(data):
     #Group by year and month
-    data = data.drop(columns = ['MONTH_MON', 'FLT_DATE', 'ENTITY_TYPE', 'ENTITY_NAME', 'MONTH_NUM'])
+    data = data.drop(columns = ['MONTH_MON', 'ENTITY_TYPE', 'ENTITY_NAME', 'MONTH_NUM'])
     group_year = data.groupby('YEAR').sum()
 
     
