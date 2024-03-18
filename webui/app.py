@@ -8,7 +8,7 @@ df.dropna(inplace=True)
 
 @app.route('/')
 def hello():
-    return df.loc[df['ENTITY_NAME'] == 'Skyguide'].to_json(orient='values')
+    return 'hello world'
 
 if __name__ == '__main__':
     app.run()
