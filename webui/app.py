@@ -1,10 +1,14 @@
 from flask import Flask, render_template
+import pandas as pd
 
 app = Flask(__name__)
 
+df = pd.read_csv('Datasets/split_2014-2016.csv', index_col='FLT_DATE', parse_dates=True, date_format='%d-%m-%Y')
+df.dropna(inplace=True)
+
 @app.route('/')
 def hello():
-    return 'hello world'
+    return df.loc[df['ENTITY_NAME'] == 'Skyguide'].to_json(orient='values')
 
 if __name__ == '__main__':
     app.run()
