@@ -9,13 +9,13 @@ TrafficData1 = read_data("Datasets/split_2017-2019.csv") #Change to choose CSV f
 ANSPs = ANSPs(TrafficData1)
 ANSPs = cleanlist(ANSPs)
 ANSPsdf = split_data(TrafficData1, ANSPs)
-ANSPName = input("Which ANSP would you want data from?")
+ANSPName = input("Which ANSP would you want data from? ")
 data, ANSPName = get_data(ANSPName, ANSPsdf, ANSPs)
 
 
 
-data = calculate_scores_daily(data)
-#data = calculate_scores_monthly(data)
+#data = calculate_scores_daily(data)
+data = calculate_scores_monthly(data)
 #data = calculate_scores_yearly(data)
 
 

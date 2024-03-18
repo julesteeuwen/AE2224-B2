@@ -38,7 +38,7 @@ def graphdata(data, ANSPName):
     print("For adjusted density \"8\" and then press ENTER")
     choice = input("Type your choice:")
     while choice not in ["1","2","3","4","5","6","7","8"]:
-        choice = input("Type your choice:")
+        choice = input("Type your choice: ")
     if choice == "1":
         choice = 'VERTICAL_INTER_HRS'
         lable = 'Vertical Interactions'
