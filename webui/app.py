@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 import pandas as pd
+import os
 
 app = Flask(__name__)
 
@@ -11,4 +12,4 @@ def hello():
     return 'hello world'
 
 if __name__ == '__main__':
-    app.run(port=8080)
+    app.run(port=os.environ['PORT'])
