@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import preprocessing
+# import preprocessing
 from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.tsa.holtwinters import SimpleExpSmoothing
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
@@ -41,15 +41,15 @@ df = pd.read_csv('Datasets/split_2014-2016.csv', index_col='FLT_DATE', parse_dat
 df.dropna(inplace=True)
 
 # Filtering data and selecting an ANSP
-df_vert = df["VERTICAL_INTER_HRS"].to_frame()
-df_ansp = df_vert.loc[df['ENTITY_NAME'] == 'Skyguide']
+df_vert = df.loc[:, "VERTICAL_INTER_HRS"].to_frame()
+df_ansp = df_vert.loc[df['ENTITY_NAME'] == 'Skyguide'].copy()
 df_ansp.index.freq = pd.infer_freq(df_ansp.index)
 
-plot_decompose(df_ansp)
+# plot_decompose(df_ansp)
 
 df_ansp.loc[:, "SMA"] = SMA(df_ansp, 50)
-df_ansp.loc[:, "CMA"] = CMA(df_ansp[['VERTICAL_INTER_HRS']])
-df_ansp.loc[:, "EWMA"] = EWMA(df_ansp[['VERTICAL_INTER_HRS']], 50)
+df_ansp.loc[:, "CMA"] = CMA(df_ansp.loc[:, 'VERTICAL_INTER_HRS'])
+df_ansp.loc[:, "EWMA"] = EWMA(df_ansp.loc[:, 'VERTICAL_INTER_HRS'], 50)
 
 df_ansp.plot()
 plt.show()
