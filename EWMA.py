@@ -74,11 +74,16 @@ df_ansp.index.freq = pd.infer_freq(df_ansp.index)
 # print(HWES3_ADD(df_ansp).size)
 # print(df_ansp.size)
 
+# Split data
 slice = int(0.8*len(df_ansp))
 train_ansp = df_ansp[:slice]
 test_ansp = df_ansp[slice:]
+
+# Fit and predict model
 model = ExponentialSmoothing(train_ansp, trend='add', seasonal='add', seasonal_periods=365).fit()
 test_predictions = model.forecast(365)
+
+# Plot results
 train_ansp['VERTICAL_INTER_HRS'].plot(legend=True, label='TRAIN')
 test_ansp['VERTICAL_INTER_HRS'].plot(legend=True, label='TEST')
 test_predictions.plot(legend=True, label='pred')
