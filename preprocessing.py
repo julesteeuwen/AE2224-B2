@@ -20,7 +20,7 @@ def ANSPs(SortedData):
     Takes the sorted dataframe and returns a list of all of the ANSPs
     """
     ANSPs = []
-    return SortedData.ENTITY_NAME.unique()
+    return list(SortedData.ENTITY_NAME.unique())
 
 def cleanlist(list):
     list = [x for x in list if str(x) != 'nan']
@@ -81,8 +81,8 @@ def Fuller_test(dataframe, parameter, plotting=False):
         print(f"{parameter} is not stationary")
         return False
 
-dataframe = read_data('Datasets/split_2014-2016.csv')
-dataframe = dataframe[dataframe['ENTITY_NAME'] == "LVNL"]
-Fuller_test(dataframe, "CPLX_FLIGHT_HRS")
+# dataframe = read_data('Datasets/split_2014-2016.csv')
+# dataframe = dataframe[dataframe['ENTITY_NAME'] == "LVNL"]
+# Fuller_test(dataframe, "CPLX_FLIGHT_HRS")
 
 

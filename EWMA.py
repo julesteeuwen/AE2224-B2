@@ -1,10 +1,12 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from preprocessing import *
 # import preprocessing
 from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.tsa.holtwinters import SimpleExpSmoothing
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
+from sklearn.model_selection import train_test_split
 
 # Simple Moving Average (SMA)
 def SMA(df, period):
@@ -36,6 +38,7 @@ def plot_decompose(df):
 def HoltWinters():
     return
 
+
 # Importing data
 df = pd.read_csv('Datasets/split_2014-2016.csv', index_col='FLT_DATE', parse_dates=True, date_format='%d-%m-%Y')
 df.dropna(inplace=True)
@@ -52,5 +55,9 @@ df_ansp.loc[:, "CMA"] = CMA(df_ansp.loc[:, 'VERTICAL_INTER_HRS'])
 df_ansp.loc[:, "EWMA"] = EWMA(df_ansp.loc[:, 'VERTICAL_INTER_HRS'], 50)
 
 df_ansp.plot()
-plt.show()
 
+ANSPs = ANSPs(df)
+df_sorted = split_data(df, ANSPs)
+newdata = get_data("Skyguide", df_sorted, ANSPs)[0]
+
+print(newdata)
