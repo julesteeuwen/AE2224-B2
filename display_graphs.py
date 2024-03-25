@@ -2,146 +2,113 @@ import csv
 import matplotlib.pyplot as plt
 import datetime
 from preprocessing import cleanlist,ANSPs,split_data,get_data, read_data
-from complexity_calculation import calculate_scores_daily, calculate_scores_monthly, calculate_scores_yearly
+from complexity_calculation import calculate_scores_daily, calculate_scores_monthly, calculate_scores_yearly, total_complexity_by_ANSP
 
-
-
-#service_provider = input("Enter air service provider")  #has to be an existing one, written exactly as in the data excel
-def graphdata(data, ANSPName, indicator, i, axs):
-    # start_date = datetime.date(2014, 1, 1)
-    # end_date = datetime.date(2016, 12, 31)
-    # dates = [start_date + datetime.timedelta(days=i) for i in range((end_date - start_date).days + 1)]
-    
-    while indicator not in ["1","2","3","4","5","6","7","8"]:
-        indicator = input("Type your choice: ")
-    if indicator == "1":
-        indicator = 'VERTICAL_INTER_HRS'
-        lable = ANSPName + ' Vertical Interactions'
-        title = 'Vertical interactions with time'
-    elif indicator == "2":
-        indicator = 'HORIZ_INTER_HRS'
-        lable = ANSPName + ' Horizontal Interactions'
-        title = 'Horizontal interactions with time' 
-    elif indicator == "3":
-        indicator = 'SPEED_INTER_HRS'
-        lable = ANSPName + ' Speed Interactions'
-        title = 'Speed interactions with time' 
-    elif indicator == "4":
-        indicator = 'Vertical_score'
-        lable = ANSPName + ' Vertical Score'
-        title = 'Vertical interaction scores with time' 
-    elif indicator == "5":
-        indicator = 'Horizontal_score'
-        lable = ANSPName + ' Horizontal Score'
-        title = 'Horizontal interaction scores with time' 
-    elif indicator == "6":
-        indicator = 'Speed_score'
-        lable = ANSPName + ' Speed Score'
-        title = 'Speed interaction scores with time' 
-    elif indicator == "7":
-        indicator = 'Complexity_score'
-        lable = ANSPName + ' Complexity Score'
-        title = 'Complexity score with time' 
-    elif indicator == "8":
-        indicator = 'Adjusted_density'
-        lable = ANSPName + ' Adjusted Density'
-        title = 'Adjusted density with time' 
-
-
-    #filename = 'datasets/split_2014-2016.csv'  # Change this to the path of your CSV file
-    #column_data = read_csv_column(filename, choice, service_provider)
-    column_data = data[indicator]
-    #print(column_data)
-    column_data.plot(label = lable)
-    plt.xlabel('Time')
-    #plt.title(title)
-    plt.legend()
     
     
 
 
 
-def graphmultipledata(SelectedANSPs, ANSPsdf, ANSPs, choice):
+def graphmultipledata(SelectedANSPs, ANSPsdf, ANSPs, graph_info, period):
 
-    fig, axs = plt.subplots(nrows = len(choice), sharex='col')
-    i = 0
+    fig, axs = plt.subplots(nrows = len(graph_info), sharex='col')
+    
      
+    
 
-    for indicator in choice:
+    for i in range(len(graph_info)):
         
-        labels = [0]*len(choice)
+        labels = [0]*len(graph_info)
         
         for ANSPName in SelectedANSPs:
             data, ANSPName = get_data(ANSPName, ANSPsdf, ANSPs)
+            
+            if period == 'day':
+                data = calculate_scores_daily(data)
+            elif period == 'month':
+                data = calculate_scores_monthly(data)
+            elif period == 'year':
+                data = calculate_scores_yearly(data)
+            else:
+                print('invalid period')
+                break
 
-            #data = calculate_scores_daily(data)
-            data = calculate_scores_monthly(data)
-            #data = calculate_scores_yearly(data)
-
-            #while indicator not in ["1","2","3","4","5","6","7","8"]:
-             #   indicator = input("Type your choice: ")
-            if indicator == "1":
-                indicator = 'VERTICAL_INTER_HRS'
-                lable = ANSPName + ' Vertical Interactions'
-                title = 'Vertical interactions with time'
-            elif indicator == "2":
-                indicator = 'HORIZ_INTER_HRS'
-                lable = ANSPName + ' Horizontal Interactions'
-                title = 'Horizontal interactions with time' 
-            elif indicator == "3":
-                indicator = 'SPEED_INTER_HRS'
-                lable = ANSPName + ' Speed Interactions'
-                title = 'Speed interactions with time' 
-            elif indicator == "4":
-                indicator = 'Vertical_score'
-                lable = ANSPName + ' Vertical Score'
-                title = 'Vertical interaction scores with time' 
-            elif indicator == "5":
-                indicator = 'Horizontal_score'
-                lable = ANSPName + ' Horizontal Score'
-                title = 'Horizontal interaction scores with time' 
-            elif indicator == "6":
-                indicator = 'Speed_score'
-                lable = ANSPName + ' Speed Score'
-                title = 'Speed interaction scores with time' 
-            elif indicator == "7":
-                indicator = 'Complexity_score'
-                lable = ANSPName + ' Complexity Score'
-                title = 'Complexity score with time' 
-            elif indicator == "8":
-                indicator = 'Adjusted_density'
-                lable = ANSPName + ' Adjusted Density'
-                title = 'Adjusted density with time' 
-            elif indicator == "9":
-                indicator = 'Structural_index'
-                title = 'Structural index with time'
+            
 
             labels[i] = ANSPName
             #filename = 'datasets/split_2014-2016.csv'  # Change this to the path of your CSV file
             #column_data = read_csv_column(filename, choice, service_provider)
-            column_data = data[indicator]
+            column_data = data[graph_info[i][0]]
             
             column_data.plot(ax = axs[i], label = labels[i])
             axs[i].set_xlabel('Time')
-            axs[i].set_title(title)
+            axs[i].set_title(graph_info[i][1])
+            axs[i].grid()
             
-        axs[i].legend()
+        #axs[i].legend()
         axs[i].set_ylim(0)
-        i += 1
-            
+        
+        
+    #handles, labels = axs.get_legend_handles_labels()
+    handles, labels = plt.gca().get_legend_handles_labels()
+    fig.legend(handles, labels, loc='upper center')        
     
     
     plt.show()
 
 
-def displaygraphs(ANSPsdf, ANSPs):
+def displaygraphs(ANSPsdf, ANSPs, period):
     
     SelectedANSPs = input("Which ANSPs would you want data from? (separate ANSPs by comma) ")
 
     SelectedANSPs = [x.strip() for x in SelectedANSPs.split(',')]
 
 
+    choice = select_columns()
+
+    graph_info = convert_choice(choice)
     
+
+
+    graphmultipledata(SelectedANSPs, ANSPsdf, ANSPs, graph_info,period)
+
+
+def plot_entire_dataset(data,period):
+    
+
+    if period == 'day':
+        data = calculate_scores_daily(data)
+    elif period == 'month':
+        data = calculate_scores_monthly(data)
+    elif period == 'year':
+        data = calculate_scores_yearly(data)
+
+    else:
+        print('invalid period')
+
+    choice = select_columns()
+
+    graph_info = convert_choice(choice)
+
+    fig, axs = plt.subplots(nrows = len(graph_info), sharex='col')
+
+
+    for i in range(len(graph_info)):
+        
+        data[graph_info[i][0]].plot(ax = axs[i])
+        
+        axs[i].set_xlabel('Time')
+        axs[i].set_title(graph_info[i][1])
+        axs[i].grid()
+            
+        
+        #axs[i].set_ylim(0)
+
+    plt.show()
+    
+
+
+def select_columns():
     print("For vertical interactions hours \"1\" and then press ENTER")
     print("For horisontal interactions hours \"2\" and then press ENTER")
     print("For speed interactions hours \"3\" and then press ENTER")
@@ -155,4 +122,73 @@ def displaygraphs(ANSPsdf, ANSPs):
 
     choice = [x.strip() for x in choice.split(',')]
 
-    graphmultipledata(SelectedANSPs, ANSPsdf, ANSPs, choice)
+    return choice
+
+def convert_choice(choice):
+    graph_info = []
+
+    for indicator in choice:
+        if indicator == "1":
+            indicator = 'VERTICAL_INTER_HRS'
+            
+            title = 'Vertical interactions with time'
+        elif indicator == "2":
+            indicator = 'HORIZ_INTER_HRS'
+            
+            title = 'Horizontal interactions with time' 
+        elif indicator == "3":
+            indicator = 'SPEED_INTER_HRS'
+            
+            title = 'Speed interactions with time' 
+        elif indicator == "4":
+            indicator = 'Vertical_score'
+            
+            title = 'Vertical interaction scores with time' 
+        elif indicator == "5":
+            indicator = 'Horizontal_score'
+            
+            title = 'Horizontal interaction scores with time' 
+        elif indicator == "6":
+            indicator = 'Speed_score'
+            
+            title = 'Speed interaction scores with time' 
+        elif indicator == "7":
+            indicator = 'Complexity_score'
+            
+            title = 'Complexity score with time' 
+        elif indicator == "8":
+            indicator = 'Adjusted_density'
+            
+            title = 'Adjusted density with time' 
+        elif indicator == "9":
+            indicator = 'Structural_index'
+            title = 'Structural index with time'
+
+        graph_info.append([indicator, title])
+
+    return graph_info
+
+
+    
+def plot_by_ANSP(data):
+    data = total_complexity_by_ANSP(data)
+    choice = select_columns()
+    graph_info = convert_choice(choice)
+
+    fig, axs = plt.subplots(nrows = len(graph_info), sharex='col')
+
+
+    for i in range(len(graph_info)):
+        
+        data[graph_info[i][0]].plot.bar(ax = axs[i])
+        
+        axs[i].set_xlabel('Time')
+        axs[i].set_title(graph_info[i][1])
+        axs[i].grid()
+            
+        
+        #axs[i].set_ylim(0)
+
+    
+    plt.show()
+

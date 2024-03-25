@@ -40,3 +40,10 @@ def calculate_scores_yearly(data):
     #Calculate scores for given month
 
     return calculate_scores_daily(group_year)
+
+def total_complexity_by_ANSP(data):
+    data = data.drop(columns = ['MONTH_MON', 'ENTITY_TYPE', 'MONTH_NUM', 'YEAR'])
+    data = data.groupby('ENTITY_NAME').sum()
+
+    return calculate_scores_daily(data)
+
