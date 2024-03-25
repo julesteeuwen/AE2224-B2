@@ -53,7 +53,7 @@ def Trend_Decompose(dataframe, label, plotting = False):
 
 def auto_ARIMA(dataframe, label, test_size, plotting = False):
     train, test = train_test_split(dataframe, test_size = test_size, shuffle=False)
-    model = auto_arima(x=train.index, y=train[label].values, trace=True, error_action='ignore', suppress_warnings=True)
+    model = auto_arima(x=train.index, y=train[label].values, trace=True, error_action='ignore', suppress_warnings=True, m = 7)
     model.fit(x=train.index, y=train[label].values)
     forecast = model.predict(n_periods=len(test))
     forecast = pd.DataFrame(forecast, index = test.index, columns = ['Prediction'])
