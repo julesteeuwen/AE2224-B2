@@ -36,7 +36,7 @@ df[['EWMA']] = EWMA(df_close, 10)
 # Plotting data
 df = df[['Date', 'Close', 'SMA', 'CMA', 'EWMA']]
 
-df['Date'] = pd.to_datetime(df['Date'], format = '%Y-%m-%d')
+df['Date'] = pd.to_datetime(df['Date'])
 
 df.set_index(['Date'], inplace = True)
 

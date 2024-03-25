@@ -66,7 +66,7 @@ def Stationary_test(dataframe, parameter, plotting=False):
     print(f"mean error = {error_mean/len(dataframe[parameter])}, std error = {error_std/len(dataframe[parameter])}")
     '''
     if plotting:
-        plt.plot(np.array(dataframe["FLT_Date"].values), np.array(dataframe[parameter].values), label='Data', color = "red")
+        plt.plot(np.array(dataframe.index), np.array(dataframe[parameter].values), label='Data', color = "red")
         plt.plot(rolling_mean, color = "blue", label = "Rolling Mean")
         plt.plot(rolling_std, color = "green", label = "Rolling Std")
         plt.legend(loc = "best")
@@ -74,23 +74,26 @@ def Stationary_test(dataframe, parameter, plotting=False):
         plt.show()
     adft = adfuller(np.array(dataframe[parameter].values), autolag='AIC')
     print(f"ADF-test:{parameter} = {adft[1]}")
-    #if adft[1] < 0.05:
-        #print(f"DF-test:{parameter} is stationary")
-    #else:
-        #print(f"DF-test:{parameter} is not stationary")
+    '''
+    if adft[1] < 0.05:
+        print(f"DF-test:{parameter} is stationary")
+    else:
+        print(f"DF-test:{parameter} is not stationary")
+    '''
     
     # Phillips-Perron Test
-    pp = PhillipsPerron(dataframe[parameter],lags=12,trend='ct',test_type='rho')
+    pp = PhillipsPerron(dataframe[parameter],trend = 'ct', test_type="rho")
     print(pp.summary().as_text())
-    #if pp.pvalue < 0.05:
-        #print(f"PP-test:{parameter} is stationary")
-    #else:
-        #print(f"PP-test:{parameter} is not stationary")
-    
+    '''
+    if pp.pvalue < 0.05:
+        print(f"PP-test:{parameter} is stationary")
+    else:
+        print(f"PP-test:{parameter} is not stationary")
+    '''
 
+#dataframe = read_data('Datasets/split_2014-2016.csv')
+#dataframe = dataframe[dataframe['ENTITY_NAME'] == "LVNL"]
+#Stationary_test(dataframe, "CPLX_FLIGHT_HRS", plotting = True)
 
-dataframe = read_data('Datasets/split_2014-2016.csv')
-dataframe = dataframe[dataframe['ENTITY_NAME'] == "LVNL"]
-Stationary_test(dataframe, "CPLX_FLIGHT_HRS")
 
 
