@@ -21,3 +21,9 @@ new_data = split_csv(filename)
 new_filename = 'datasets/split_2014-2016.csv'  # Choose a name for the new CSV file
 write_csv(new_filename, new_data)
 print(f"Data from '{filename}' has been split and written to '{new_filename}'.")
+
+filename = 'datasets/2017-2019.csv'  # Replace this with the path to your CSV file
+new_data = split_csv(filename)
+new_filename = 'datasets/split_2017-2019.csv'  # Choose a name for the new CSV file
+write_csv(new_filename, new_data)
+print(f"Data from '{filename}' has been split and written to '{new_filename}'.")
