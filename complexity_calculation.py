@@ -19,31 +19,47 @@ def calculate_scores_daily(data):
     data["Complexity_score"] = data["Adjusted_density"] * data["Structural_index"]
 
     
+
+    
     return data
 
 def calculate_scores_monthly(data):
     #Group by year and month
-    data = data.drop(columns = ['MONTH_MON', 'ENTITY_TYPE', 'ENTITY_NAME'])
-    group_month = data.groupby(['YEAR', 'MONTH_NUM']).sum()
+    
+    group_month = data.groupby(['YEAR', 'MONTH_NUM']).sum(numeric_only = True)
 
     
     #Calculate scores for given month
 
-    return calculate_scores_daily(group_month)
+    data = calculate_scores_daily(group_month)
+
+    data["Y-M"] = [str(int(data.index[i][0]))+'-'+str(int(data.index[i][1])) for i in range(len(data))]
+
+    data = data.set_index("Y-M")
+
+    
+
+    
+    return data
 
 def calculate_scores_yearly(data):
     #Group by year and month
-    data = data.drop(columns = ['MONTH_MON', 'ENTITY_TYPE', 'ENTITY_NAME', 'MONTH_NUM'])
-    group_year = data.groupby('YEAR').sum()
+    
+    group_year = data.groupby('YEAR').sum(numeric_only = True)
 
     
     #Calculate scores for given month
+    data = calculate_scores_daily(group_year)
 
-    return calculate_scores_daily(group_year)
+    data["Y"] = [int(data.index[i]) for i in range(len(data))]
+
+    data = data.set_index("Y")
+
+    return data
 
 def total_complexity_by_ANSP(data):
-    data = data.drop(columns = ['MONTH_MON', 'ENTITY_TYPE', 'MONTH_NUM', 'YEAR'])
-    data = data.groupby('ENTITY_NAME').sum()
+    
+    data = data.groupby('ENTITY_NAME').sum(numeric_only = True)
 
     return calculate_scores_daily(data)
 
