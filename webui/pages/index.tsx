@@ -8,30 +8,44 @@ import { title, subtitle } from "@/components/primitives";
 import { GithubIcon } from "@/components/icons";
 import DefaultLayout from "@/layouts/default";
 import {Tabs, Tab, Card, CardBody, CardHeader} from "@nextui-org/react";
+import { ANSPChart } from "@/components/anspchart";
+import { useState, useEffect, useMemo } from "react";
+import { Selection } from "@nextui-org/react";
 
-const ansps = [
-	"LVNL",
-	"Skyguide"
-]
-let tabs = [
-    {
-      id: "photos",
-      label: "Visualisation",
-      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-    },
-    {
-      id: "music",
-      label: "Forecasting",
-      content: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
-    },
-    {
-      id: "videos",
-      label: "Videos",
-      content: "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-    }
-  ];
 
 export default function IndexPage() {
+	const ansps = ['ANS CR', 'ARMATS', 'Albcontrol', 'Austro Control', 'Avinor (Continental)', 'BULATSA', 'Belgocontrol', 'Croatia Control', 'DCAC Cyprus', 'DFS', 'DHMI', 'DSNA', 'EANS', 'ENAIRE', 'ENAV', 'Finavia', 'HCAA', 'HungaroControl', 'IAA', 'LFV', 'LGS', 'LPS', 'LVNL', 'M-NAV', 'MATS', 'MUAC', 'MoldATSA', 'NATS (Continental)', 'NAV Portugal (Continental)', 'NAVIAIR', 'Oro Navigacija', 'PANSA', 'ROMATSA', 'SMATSA', 'Sakaeronavigatsia', 'Skyguide', 'Slovenia Control', 'UkSATSE']
+
+	const [SelectedANSPs, setSelectedANSPs] = useState(new Set<string>([ansps[0]]));
+
+	const handleSelectionChange = (keys: Selection) => {
+		setSelectedANSPs(new Set<string>(Array.from(keys).map(key => key.toString())));
+	};
+
+
+	let tabs = [
+		{
+			id: "data",
+			label: "Data",
+			content: ";)"
+		},
+		{
+			id: "vis",
+			label: "Visualisation",
+			content: <ANSPChart ansps={Array.from(SelectedANSPs)}></ANSPChart>
+		},
+		{
+		id: "music",
+		label: "Forecasting",
+		content: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+		},
+		{
+		id: "videos",
+		label: "Videos",
+		content: "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+		}
+	];
+	
 	return (
 		<DefaultLayout>
 			<section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
@@ -41,13 +55,16 @@ export default function IndexPage() {
 					placeholder="Select the ANSPs"
 					selectionMode="multiple"
 					className="max-w-xs"
-					>
+					selectedKeys={SelectedANSPs}
+					onSelectionChange={handleSelectionChange}
+				>
 					{ansps.map((ansp) => (
 						<SelectItem key={ansp} value={ansp}>
-						{ansp}
+							{ansp}
 						</SelectItem>
 					))}
 				</Select>
+				<p className="text-small text-default-500">Selected: {Array.from(SelectedANSPs).join(", ")}</p>
 				<Tabs aria-label="Dynamic tabs" items={tabs}>
 					{(item) => (
 					<Tab key={item.id} title={item.label}>
@@ -93,7 +110,6 @@ export default function IndexPage() {
 					</Link>
 				</div>
 			</section>
-
 		</DefaultLayout>
 	);
 }
