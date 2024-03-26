@@ -5,7 +5,7 @@ import sys, os, inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 parentparentdir = os.path.dirname(parentdir)
-sys.path.insert(0, parentdir) 
+sys.path.insert(0, parentparentdir) 
 
 from preprocessing import get_data, read_data, ANSPs, split_data, cleanlist
 
