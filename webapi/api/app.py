@@ -21,7 +21,7 @@ def hello():
 @cross_origin()
 def ansp(name):
     ansps = name.split(',')
-    TrafficData1 = read_data("../../Datasets/split_2014-2016.csv") #Change to choose CSV file
+    TrafficData1 = read_data("split_2014-2016.csv") #Change to choose CSV file
     ANSPs_list = ANSPs(TrafficData1)
     ansps = [ansp for ansp in ansps if ansp in ANSPs_list]
     ANSPs_list = cleanlist(ANSPs_list)
