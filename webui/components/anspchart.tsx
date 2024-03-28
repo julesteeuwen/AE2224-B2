@@ -41,7 +41,7 @@ export const ANSPChart = (props: {ansps: Array<string>}) => {
 	const [data, setData] = useState<Root | null>(null);
 	const ansp0 = props.ansps[0]
 	useEffect(() => {
-		fetch('https://ae-2224-b2.vercel.app/ansps/' + props.ansps.join(','))
+		fetch('http://localhost:5000/ansps/' + props.ansps.join(','))
 			.then(response => response.json())
 			.then((data: Root) => {
 				// for(const key of Object.keys(data)) {

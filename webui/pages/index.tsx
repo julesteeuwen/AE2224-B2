@@ -11,6 +11,7 @@ import {Tabs, Tab, Card, CardBody, CardHeader} from "@nextui-org/react";
 import { ANSPChart } from "@/components/anspchart";
 import { useState, useEffect, useMemo } from "react";
 import { Selection } from "@nextui-org/react";
+import { ScoresTable } from "@/components/scorestable";
 
 
 export default function IndexPage() {
@@ -27,7 +28,7 @@ export default function IndexPage() {
 		{
 			id: "data",
 			label: "Data",
-			content: ";)"
+			content: <ScoresTable ansps={Array.from(SelectedANSPs)}></ScoresTable>
 		},
 		{
 			id: "vis",
