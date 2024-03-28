@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from statsmodels.tsa.stattools import adfuller
 from arch.unitroot import PhillipsPerron
+from scipy.stats import kruskal
 
 def read_data(filename):
     """
@@ -105,6 +106,18 @@ def Fuller_test(dataframe, parameter, plotting=False):
     else:
         print(f"PP-test:{parameter} is not stationary")
     '''
+
+
+def seasonality_check(series, period=365):
+    """
+    This function performs the Kruskal-Wallis H-test, to determine if the series has a seasonal component.
+    Input: Series that should be tested (not dataframe :))
+           Seasonal period (default 365)
+    Output: True / False
+    """
+    idx = np.arange(len(series.index)) % period
+    H_statistic, p_value = kruskal(series, idx)
+    return p_value <= 0.05
 
 #dataframe = read_data('Datasets/split_2014-2016.csv')
 #dataframe = dataframe[dataframe['ENTITY_NAME'] == "LVNL"]
