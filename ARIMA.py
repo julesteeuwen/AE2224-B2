@@ -1,32 +1,56 @@
-import pandas as pd
-import pmdarima as pmd
-import matplotlib.pyplot as plt
 import numpy as np
-import sklearn as sk
+import pandas as pd
+import matplotlib.pyplot as plt
+from statsmodels.tsa.stattools import adfuller
+from statsmodels.tsa.arima_model import ARIMA
+import statsmodels.api as sm
+from statsmodels.graphics.tsaplots import plot_acf,plot_pacf
 
-#read file and and chosse parameters to predict
-data = pd.read_csv('Datasets/AAPL.csv')
-Predictor = data['Close']
-Time = data['Date']
+#import data
+df = pd.read_csv('Datasets/AAPL.csv')
+df = df[['Date', 'Close']]
+df['Date'] = pd.to_datetime(df['Date'], format = '%Y-%m-%d')
+df.set_index(['Date'], inplace = True)
 
-#reshape dataframe to numpy array
-x = Time.to_numpy()
-y = data['Close'].to_numpy()
-array = np.arange(len(x)).reshape(-1, 1)
-#print(array)
+#check stationarity
+test_result=adfuller(df['Close'])
 
-#train model
-model = sk.linear_model.LinearRegression().fit(array, y)
-Predicted_Predictor = model.predict(array)
+def adfuller_test(sales):
+    result=adfuller(sales)
+    labels = ['ADF Test Statistic','p-value','#Lags Used','Number of Observations Used']
+    for value,label in zip(result,labels):
+        print(label+' : '+str(value) )
+    if result[1] <= 0.05:
+        print("P value is less than 0.05 that means we can reject the null hypothesis(Ho). Therefore we can conclude that data has no unit root and is stationary")
+    else:
+        print("Weak evidence against null hypothesis that means time series has a unit root which indicates that it is non-stationary ")
 
-# plot model
-def plotting(x, y, xlabel, ylabel, title):
-    plt.plot(x, y)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    plt.title(title)
-    plt.grid(True)
-    plt.plot(array, Predicted_Predictor, color='red')
-    plt.show()
+#adfuller_test(df['Close'])
 
-plotting(Time, Predictor, 'Date', 'Close', 'AAPL Stock Price')
+#Differencing
+df['Daily First Difference']=df['Close']-df['Close'].shift(1)
+#adfuller_test(df['Daily First Difference'].dropna())
+
+#fig = plt.figure(figsize=(12,8))
+#ax1 = fig.add_subplot(211)
+#fig = sm.graphics.tsa.plot_acf(df['Daily First Difference'].iloc[13:],lags=40,ax=ax1)
+#ax2 = fig.add_subplot(212)
+#fig = sm.graphics.tsa.plot_pacf(df['Daily First Difference'].iloc[13:],lags=40,ax=ax2)
+#plt.show()
+
+model=sm.tsa.statespace.SARIMAX(df['Close'],order=(1, 1, 1),seasonal_order=(1,1,1,12))
+results=model.fit()
+print(results.summary())
+
+#residuals = pd.DataFrame(results.resid)
+#residuals.plot()
+#plt.show()
+# density plot of residuals
+#residuals.plot(kind='kde')
+#plt.show()
+# summary stats of residuals
+#print(residuals.describe())
+
+df['forecast']=results.predict(start=200,end=250,dynamic=True)
+df[['Close', 'forecast']].plot(figsize=(12,8))
+plt.show()

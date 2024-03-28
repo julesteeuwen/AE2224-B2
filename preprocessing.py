@@ -4,6 +4,7 @@ import statsmodels as sm
 import matplotlib.pyplot as plt
 import seaborn as sns
 from statsmodels.tsa.stattools import adfuller
+from arch.unitroot import PhillipsPerron
 
 def read_data(filename):
     """
@@ -48,6 +49,15 @@ def get_data(ANSPName, ANSPsdf, ANSPs):
     ANSPIndex = ANSPs.index(ANSPName)
     return ANSPsdf[ANSPIndex], ANSPName
 
+
+def Stationary_test(dataframe, parameter, plotting=False):
+    """
+    Checks if dataframe is stationary, prints the results in terminal
+    """
+    #Dickey-Fuller Test
+    dataframe.dropna()
+    rolling_mean = dataframe[parameter].rolling(15).mean()
+
 def Fuller_test(dataframe, parameter, plotting=False):
     """
     Checks if the parameter is stationary, returns True of stationary, False if not
@@ -57,6 +67,7 @@ def Fuller_test(dataframe, parameter, plotting=False):
     #dataframe.index = dataframe["FLT_Date"]
     rolling_mean = dataframe[parameter].rolling(15).mean()
     print(rolling_mean)
+
     rolling_std = dataframe[parameter].rolling(15).std()
     '''
     error_mean = 0
@@ -67,22 +78,40 @@ def Fuller_test(dataframe, parameter, plotting=False):
     print(f"mean error = {error_mean/len(dataframe[parameter])}, std error = {error_std/len(dataframe[parameter])}")
     '''
     if plotting:
-        plt.plot(np.array(dataframe["FLT_Date"].values), np.array(dataframe[parameter].values), label='Data', color = "red")
+
+        plt.plot(np.array(dataframe.index), np.array(dataframe[parameter].values), label='Data', color = "red")
+      
         plt.plot(rolling_mean, color = "blue", label = "Rolling Mean")
         plt.plot(rolling_std, color = "green", label = "Rolling Std")
         plt.legend(loc = "best")
         plt.draw()
         plt.show()
     adft = adfuller(np.array(dataframe[parameter].values), autolag='AIC')
+
+    print(f"ADF-test:{parameter} = {adft[1]}")
+    '''
     if adft[1] < 0.05:
-        print(f"{parameter} is stationary")
-        return True
+        print(f"DF-test:{parameter} is stationary")
     else:
-        print(f"{parameter} is not stationary")
-        return False
+        print(f"DF-test:{parameter} is not stationary")
+    '''
+    
+    # Phillips-Perron Test
+    pp = PhillipsPerron(dataframe[parameter],trend = 'ct', test_type="rho")
+    print(pp.summary().as_text())
+    '''
+    if pp.pvalue < 0.05:
+        print(f"PP-test:{parameter} is stationary")
+    else:
+        print(f"PP-test:{parameter} is not stationary")
+    '''
 
 #dataframe = read_data('Datasets/split_2014-2016.csv')
 #dataframe = dataframe[dataframe['ENTITY_NAME'] == "LVNL"]
 #Fuller_test(dataframe, "CPLX_FLIGHT_HRS")
 
 
+
+#dataframe = read_data('Datasets/split_2014-2016.csv')
+#dataframe = dataframe[dataframe['ENTITY_NAME'] == "LVNL"]
+#Stationary_test(dataframe, "CPLX_FLIGHT_HRS", plotting = True)
