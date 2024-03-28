@@ -7,6 +7,8 @@ from statsmodels.tsa.holtwinters import SimpleExpSmoothing
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from sklearn.model_selection import train_test_split
 
+from preprocessing import seasonality_check
+
 # Simple Moving Average (SMA)
 def SMA(df, period):
     """ Returns a dataframe containing the Simple Moving Averages over the given dataframe using the given period """
@@ -87,6 +89,7 @@ test_predictions = model.forecast(365)
 train_ansp['VERTICAL_INTER_HRS'].plot(legend=True, label='TRAIN')
 test_ansp['VERTICAL_INTER_HRS'].plot(legend=True, label='TEST')
 test_predictions.plot(legend=True, label='pred')
+
 
 
 # df_ansp.loc[:, "HWES3_ADD"] = HWES3_ADD(df_ansp)
