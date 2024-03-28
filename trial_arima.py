@@ -15,7 +15,7 @@ plt.plot(np.array(test["FLT_DATE"].values), np.array(test["VERTICAL_INTER_HRS"].
 #sns.set()
 
 
-model = auto_arima(x=train["FLT_DATE"].values,y=train["VERTICAL_INTER_HRS"].values,trace=True,error_action="ignore",suppress_warnings=True)
+model = auto_arima(x=train["FLT_DATE"].values,y=train["VERTICAL_INTER_HRS"].values,trace=True,error_action="ignore",suppress_warnings=True, alpha = 0.05)
 
 model.fit(x=train["FLT_DATE"].values,y=train["VERTICAL_INTER_HRS"].values)
 
