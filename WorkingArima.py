@@ -12,8 +12,8 @@ from outliers_out import apply_moving_average
 dataframe = pd.read_csv('Datasets/2017-2019.csv', index_col= 'FLT_DATE',parse_dates=True, date_format='%d-%m-%Y',delimiter=';')
 dataframe = dataframe.dropna()  # drop missing values
 df1 = dataframe[dataframe['ENTITY_NAME'] == 'LVNL']
-df1 = apply_moving_average(df1, window_size=183, perc=30)
 field = 'CPLX_INTER'
+df1 = apply_moving_average(df1, window_size=183, perc=30, field)
 data = df1[field].values
 train, test = model_selection.train_test_split(df1[field], train_size=0.75)
 
