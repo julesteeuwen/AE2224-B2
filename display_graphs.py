@@ -13,9 +13,6 @@ def graphmultipledata(SelectedANSPs, ANSPsdf, ANSPs, graph_info, period):
 
     fig, axs = plt.subplots(nrows = len(graph_info), sharex='col')
     
-     
-    
-
     for i in range(len(graph_info)):
         
         labels = [0]*len(graph_info)
