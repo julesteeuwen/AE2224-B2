@@ -1,7 +1,6 @@
 from preprocessing import *
-from read_from_file import *
-from complexity_calculation import calculate_scores_daily, calculate_scores_monthly, calculate_scores_yearly
-from AUTO_ARIMA import auto_ARIMA
+from archive.read_from_file import *
+from preprocessing.complexity_calculation import calculate_scores_daily, calculate_scores_monthly, calculate_scores_yearly
 
 
 
@@ -15,4 +14,3 @@ data, ANSPName = get_data(ANSPName, ANSPsdf, ANSPs)
 
 
 data = calculate_scores_daily(data)
-auto_ARIMA(data,"Complexity_score",plotting=True)
