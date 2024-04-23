@@ -110,7 +110,7 @@ def plot_entire_dataset(data,period):
 
 def select_columns():
     print("For vertical interactions hours \"1\" and then press ENTER")
-    print("For horisontal interactions hours \"2\" and then press ENTER")
+    print("For horizontal interactions hours \"2\" and then press ENTER")
     print("For speed interactions hours \"3\" and then press ENTER")
     print("For vertical interactions score \"4\" and then press ENTER")
     print("For horizontal interactions score \"5\" and then press ENTER")
@@ -118,6 +118,7 @@ def select_columns():
     print("For complexity score \"7\" and then press ENTER")
     print("For adjusted density \"8\" and then press ENTER")
     print("For structural index \"9\" and then press ENTER")
+    print("For complexity flight hours \"10\" and then press ENTER")
     choice = input("Type your choice (comma separated):")
 
     choice = [x.strip() for x in choice.split(',')]
@@ -163,6 +164,10 @@ def convert_choice(choice):
         elif indicator == "9":
             indicator = 'Structural_index'
             title = 'Structural index with time'
+
+        elif indicator == "10":
+            indicator = 'CPLX_FLIGHT_HRS'
+            title = 'Complexity flight hours with time'
 
         graph_info.append([indicator, title])
 

@@ -23,7 +23,7 @@ ANSPsdf = split_data(TrafficData1, ANSPs)
 
 
 #for plotting data selected 'day', 'month' or 'year'
-#plot_entire_dataset(TrafficData1, 'month')
-displaygraphs(ANSPsdf, ANSPs, 'week')
+#plot_entire_dataset(TrafficData1, 'day')
+displaygraphs(ANSPsdf, ANSPs, 'day')
 #plot_by_ANSP(TrafficData1)
 #calculate_scores_weekly(TrafficData1)
