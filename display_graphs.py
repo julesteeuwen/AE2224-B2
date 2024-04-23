@@ -2,14 +2,25 @@ import csv
 import matplotlib.pyplot as plt
 import datetime
 from preprocessing import cleanlist,ANSPs,split_data,get_data, read_data
-from complexity_calculation import calculate_scores_daily, calculate_scores_monthly, calculate_scores_yearly, total_complexity_by_ANSP
+from complexity_calculation import calculate_scores_daily, calculate_scores_monthly, calculate_scores_yearly, total_complexity_by_ANSP, calculate_scores_weekly
 
     
     
 
 
+def displaygraphs(ANSPsdf, ANSPs, period):
+    #Displays graphs of multiple ANSPs for multiple indicators
+    
+    SelectedANSPs = input("Which ANSPs would you want data from? (separate ANSPs by comma) ")
 
-def graphmultipledata(SelectedANSPs, ANSPsdf, ANSPs, graph_info, period):
+    SelectedANSPs = [x.strip() for x in SelectedANSPs.split(',')]
+
+
+    choice = select_columns()
+
+    graph_info = convert_choice(choice)
+    
+
 
     fig, axs = plt.subplots(nrows = len(graph_info), sharex='col')
     
@@ -29,6 +40,8 @@ def graphmultipledata(SelectedANSPs, ANSPsdf, ANSPs, graph_info, period):
                 data = calculate_scores_monthly(data)
             elif period == 'year':
                 data = calculate_scores_yearly(data)
+            elif period == 'week':
+                data = calculate_scores_weekly(data)
             else:
                 print('invalid period')
                 break
@@ -51,29 +64,14 @@ def graphmultipledata(SelectedANSPs, ANSPsdf, ANSPs, graph_info, period):
         
     #handles, labels = axs.get_legend_handles_labels()
     handles, labels = plt.gca().get_legend_handles_labels()
-    fig.legend(handles, labels, loc='upper center')        
+    fig.legend(handles, labels, loc='upper right')        
     
     
     plt.show()
 
 
-def displaygraphs(ANSPsdf, ANSPs, period):
-    
-    SelectedANSPs = input("Which ANSPs would you want data from? (separate ANSPs by comma) ")
-
-    SelectedANSPs = [x.strip() for x in SelectedANSPs.split(',')]
-
-
-    choice = select_columns()
-
-    graph_info = convert_choice(choice)
-    
-
-
-    graphmultipledata(SelectedANSPs, ANSPsdf, ANSPs, graph_info,period)
-
-
 def plot_entire_dataset(data,period):
+    # Plots indicators of choice for the total dataset on daily, monthly or yearly basis
     
 
     if period == 'day':
@@ -82,9 +80,11 @@ def plot_entire_dataset(data,period):
         data = calculate_scores_monthly(data)
     elif period == 'year':
         data = calculate_scores_yearly(data)
-
+    elif period == 'week':
+        data = calculate_scores_weekly(data)
     else:
         print('invalid period')
+        
 
     choice = select_columns()
 
@@ -171,6 +171,8 @@ def convert_choice(choice):
 
     
 def plot_by_ANSP(data):
+    #Plots selected indicators over the entire period by ANSP 
+
     data = total_complexity_by_ANSP(data)
     choice = select_columns()
     graph_info = convert_choice(choice)

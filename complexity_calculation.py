@@ -23,6 +23,37 @@ def calculate_scores_daily(data):
     
     return data
 
+
+def calculate_scores_weekly(data):
+    
+    data = data.dropna()
+    df = data.reset_index()
+    
+    #df['FLT_DATE'] = pd.to_datetime(df['FLT_DATE'])
+
+    df['Week_Number'] = df['FLT_DATE'].dt.isocalendar().week
+
+    df = df.groupby(["YEAR", 'Week_Number']).sum(numeric_only = True)
+    
+    df = calculate_scores_daily(df)
+
+    df = df.reset_index()
+
+   
+    
+    df['Y-W'] = [str(int(df['YEAR'][i])) + '-' + str(df['Week_Number'][i]) for i in range(len(df))]
+
+    #df = df.drop(['YEAR','Week_Number'])
+
+    df = df.set_index('Y-W')
+
+    
+
+    #print(df)
+    return df
+
+
+
 def calculate_scores_monthly(data):
     #Group by year and month
     

@@ -83,6 +83,6 @@ def Fuller_test(dataframe, parameter, plotting=False):
 
 #dataframe = read_data('Datasets/split_2014-2016.csv')
 #dataframe = dataframe[dataframe['ENTITY_NAME'] == "LVNL"]
-#Fuller_test(dataframe, "CPLX_FLIGHT_HRS")
+#Fuller_test(dataframe, "VERTICAL_INTER_HRS")
 
 
