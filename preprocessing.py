@@ -108,15 +108,32 @@ def Fuller_test(dataframe, parameter, plotting=False):
     '''
 
 
-def seasonality_check(series, period=365):
+def yearly_seasonality_check(series):
     """
     This function performs the Kruskal-Wallis H-test, to determine if the series has a seasonal component.
     Input: Series that should be tested (not dataframe :))
            Seasonal period (default 365)
     Output: True / False
     """
-    idx = np.arange(len(series.index)) % period
-    H_statistic, p_value = kruskal(series, idx)
+    res = []
+    for i in series.index.year.unique():
+        res.append(series[series.index.year == i].values)
+    H_statistic, p_value = kruskal(*res)
+    print(p_value)
+    return p_value <= 0.05
+
+def yearly_seasonality_check(series):
+    """
+    This function performs the Kruskal-Wallis H-test, to determine if the series has a seasonal component.
+    Input: Series that should be tested (not dataframe :))
+           Seasonal period (default 365)
+    Output: True / False
+    """
+    res = []
+    for i in series.index.year.unique():
+        res.append(series[series.index.year == i].values)
+    H_statistic, p_value = kruskal(*res)
+    print(p_value)
     return p_value <= 0.05
 
 #dataframe = read_data('Datasets/split_2014-2016.csv')

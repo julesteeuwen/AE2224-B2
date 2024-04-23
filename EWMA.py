@@ -31,7 +31,7 @@ def plot_decompose(df):
     result = seasonal_decompose(df, model='multiplicative', period=365)
     result.plot()
     plt.show()
-    return
+    return result
 
 # Holt-Winters triple exponential smoothing method, single, double and triple exponential smoothing using additive or multiplicative multiplaction
 def HWES3_ADD(df, period=365):
@@ -62,10 +62,12 @@ df.dropna(inplace=True)
 
 # Filtering data and selecting an ANSP
 df_vert = df.loc[:, "VERTICAL_INTER_HRS"].to_frame()
-df_ansp = df_vert.loc[df['ENTITY_NAME'] == 'Skyguide'].copy()
+df_ansp = df_vert.loc[df['ENTITY_NAME'] == 'ROMATSA'].copy()
 df_ansp.index.freq = pd.infer_freq(df_ansp.index)
 
-# plot_decompose(df_ansp)
+decomp_data = plot_decompose(df_ansp)
+print(decomp_data.trend)
+
 
 # df_ansp.loc[:, "SMA"] = SMA(df_ansp, 50)
 # df_ansp.loc[:, "CMA"] = CMA(df_ansp.loc[:, 'VERTICAL_INTER_HRS'])
@@ -87,6 +89,7 @@ test_predictions = model.forecast(365)
 train_ansp['VERTICAL_INTER_HRS'].plot(legend=True, label='TRAIN')
 test_ansp['VERTICAL_INTER_HRS'].plot(legend=True, label='TEST')
 test_predictions.plot(legend=True, label='pred')
+
 
 
 # df_ansp.loc[:, "HWES3_ADD"] = HWES3_ADD(df_ansp)
