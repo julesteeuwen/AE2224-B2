@@ -20,11 +20,11 @@ def apply_moving_average(df, window_size=183, perc=60, component = 'VERTICAL_INT
     
     return df
 
-
+'''
 df1 = data[data['ENTITY_NAME'] == 'LVNL']
 result = apply_moving_average(df1)
 
 plt.plot(df1["VERTICAL_INTER_HRS"], color='red')
 plt.plot(result["VERTICAL_INTER_HRS"], color='blue')
 plt.show()
-
+'''

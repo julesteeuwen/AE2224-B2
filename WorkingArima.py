@@ -13,7 +13,7 @@ dataframe = pd.read_csv('Datasets/2017-2019.csv', index_col= 'FLT_DATE',parse_da
 dataframe = dataframe.dropna()  # drop missing values
 df1 = dataframe[dataframe['ENTITY_NAME'] == 'LVNL']
 field = 'CPLX_INTER'
-df1 = apply_moving_average(df1, window_size=183, perc=30, field)
+df1 = apply_moving_average(df1, window_size=183, perc=30, component = field)
 data = df1[field].values
 train, test = model_selection.train_test_split(df1[field], train_size=0.75)
 
