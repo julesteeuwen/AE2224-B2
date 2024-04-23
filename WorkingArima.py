@@ -37,7 +37,6 @@ for i in range(len(test)):
     score += (test.values[i] - predicted_values[i])**2
 print(f'Score: {score/len(test.values)}')
 
-
 # #############################################################################
 # Plot actual test vs. forecasts:
 plt.plot(train, color='blue',label='Train samples')
