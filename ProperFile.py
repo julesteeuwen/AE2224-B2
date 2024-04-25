@@ -1,6 +1,8 @@
 import os
 import joblib
 from autoArima import get_SARIMA
+fields = ['CPLX_FLIGHT_HRS','CPLX_INTER','VERTICAL_INTER_HRS','HORIZ_INTER_HRS','SPEED_INTER_HRS']
+ASNPs = ['Skyguide','MUAC','DSNA']
 def get_EWMA(ASNP, field):
     return None
 def read_models(directory):
@@ -13,8 +15,7 @@ def read_models(directory):
 def get_models():
     SARIMA_models = read_models('SARIMAS')
     EWMA_models = read_models('EWMAS')
-    fields = ['CPLX_FLIGHT_HRS','CPLX_INTER','VERTICAL_INTER_HRS','HORIZ_INTER_HRS','SPEED_INTER_HRS']
-    ASNPs = ['Skyguide','MUAC','DSNA']
+    
     for field in fields:
         for ASNP in ASNPs:
             key = ASNP + field + '.pkl'
