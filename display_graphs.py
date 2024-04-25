@@ -203,32 +203,3 @@ def plot_by_ANSP(data):
     
     plt.show()
 
-'''
-def plot_by_ANSP(data):
-    #Plots selected indicators over the entire period by ANSP 
-
-    data = total_complexity_by_ANSP(data)
-    choice = select_columns()
-    graph_info = convert_choice(choice)
-
-    half_of_graphs = math.ceil(len(graph_info)/2)
-
-    fig, axs = plt.subplots(nrows = half_of_graphs, ncols= 2, sharex='col')
-
-
-
-    for j in range(2):
-        for i in range(half_of_graphs):
-            
-                try:
-                    data[graph_info[i + j * half_of_graphs][0]].plot.bar(ax = axs[i][j])
-                    
-                    axs[i][j].set_xlabel('Time')
-                    axs[i][j].set_title(graph_info[i + half_of_graphs][1])
-                    axs[i][j].grid()
-                except:
-                    pass
-                
-
-    plt.show()
-'''
