@@ -1,8 +1,7 @@
-import pandas as pd
-
-
 def calculate_scores_daily(data):
-    #Calculate individual interaction scores and complexity score for each day
+    """
+        Calculate individual interaction scores and complexity score for each day
+    """
 
     #Adjusted density
     data["Adjusted_density"] = data["CPLX_INTER"] / data["CPLX_FLIGHT_HRS"] * 60
@@ -55,6 +54,7 @@ def calculate_scores_weekly(data):
 
 
 def calculate_scores_monthly(data):
+    """ Calculate monthly complexity scores for given data """
     #Group by year and month
     
     group_month = data.groupby(['YEAR', 'MONTH_NUM']).sum(numeric_only = True)
@@ -68,12 +68,10 @@ def calculate_scores_monthly(data):
 
     data = data.set_index("Y-M")
 
-    
-
-    
     return data
 
 def calculate_scores_yearly(data):
+    """ Calculate yearly complexity scores for given data """
     #Group by year and month
     
     group_year = data.groupby('YEAR').sum(numeric_only = True)
@@ -89,6 +87,7 @@ def calculate_scores_yearly(data):
     return data
 
 def total_complexity_by_ANSP(data):
+    """ Calculate total complexity scores for given data"""
     
     data = data.groupby('ENTITY_NAME').sum(numeric_only = True)
 

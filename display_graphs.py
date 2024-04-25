@@ -1,4 +1,3 @@
-import csv
 import matplotlib.pyplot as plt
 import datetime
 import math
@@ -26,9 +25,6 @@ def displaygraphs(ANSPsdf, ANSPs, period):
 
     fig, axs = plt.subplots(nrows = len(graph_info), sharex='col')
     
-     
-    
-
     for i in range(len(graph_info)):
         
         labels = [0]*len(graph_info)
@@ -70,6 +66,22 @@ def displaygraphs(ANSPsdf, ANSPs, period):
     
     
     plt.show()
+
+
+def displaygraphs(ANSPsdf, ANSPs, period):
+    
+    SelectedANSPs = input("Which ANSPs would you want data from? (separate ANSPs by comma) ")
+
+    SelectedANSPs = [x.strip() for x in SelectedANSPs.split(',')]
+
+
+    choice = select_columns()
+
+    graph_info = convert_choice(choice)
+    
+
+
+    graphmultipledata(SelectedANSPs, ANSPsdf, ANSPs, graph_info,period)
 
 
 def plot_entire_dataset(data,period):
