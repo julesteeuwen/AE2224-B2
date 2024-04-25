@@ -1,11 +1,12 @@
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
-# import preprocessing
+import numpy as np
 from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.tsa.holtwinters import SimpleExpSmoothing
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
-from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error as mse
+import sys
+from complexity_calculation import calculate_scores_daily
 
 # Simple Moving Average (SMA)
 def SMA(df, period):
@@ -55,6 +56,40 @@ def HWES2(df):
 
 
 
+def plot_forecast_HWES3_ADD(df, period=365, field='CPLX_INTER'):
+    # Calculate daily complexity scores
+    df = calculate_scores_daily(df)
+
+    # Filtering data and selecting an ANSP
+    df_vert = df.loc[:, field].to_frame()
+    df_ansp = df_vert.loc[df['ENTITY_NAME'] == 'Skyguide'].copy()
+    df_ansp.index.freq = pd.infer_freq(df_ansp.index)
+
+    # Split data
+    slice = int(0.75*len(df_ansp))
+    train_ansp = df_ansp[:slice].copy()
+    test_ansp = df_ansp[slice:]
+
+    # Fit and predict model
+    model = ExponentialSmoothing(train_ansp, trend='add', seasonal='add', seasonal_periods=period).fit()
+    predicted_values = model.forecast(len(test_ansp))
+
+    # Calculate RMSE (Stijn's Method vs Statsmodels)
+    score = 0
+    for i in range(len(test_ansp)):
+        score += (test_ansp.values[i] - predicted_values[i])**2
+    print(f'Stijn Score: {score**0.5/len(test_ansp.values)}')
+
+    rmse = np.sqrt(mse(test_ansp, predicted_values))
+    print(f'RMSE Score: {rmse}')
+
+    # Plot results
+    train_ansp[field].plot(legend=True, label='TRAIN')
+    test_ansp[field].plot(legend=True, label='TEST')
+    predicted_values.plot(legend=True, label='pred')
+
+    plt.show()
+
 
 # Importing data
 df = pd.read_csv('Datasets/split_2014-2016.csv', index_col='FLT_DATE', parse_dates=True, date_format='%d-%m-%Y')
@@ -83,7 +118,7 @@ test_ansp = df_ansp[slice:]
 
 # Fit and predict model
 model = ExponentialSmoothing(train_ansp, trend='add', seasonal='add', seasonal_periods=365).fit()
-test_predictions = model.forecast(3 * 365)
+test_predictions = model.forecast(365)
 
 # Plot results
 train_ansp['VERTICAL_INTER_HRS'].plot(legend=True, label='TRAIN')
