@@ -92,5 +92,11 @@ def total_complexity_by_ANSP(data):
     
     data = data.groupby('ENTITY_NAME').sum(numeric_only = True)
 
-    return calculate_scores_daily(data)
+    
+
+    data = calculate_scores_daily(data)
+
+
+    data_ordered = data.sort_values(by=['Complexity_score'])
+    return data_ordered
 

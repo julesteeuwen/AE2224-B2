@@ -1,6 +1,8 @@
 import csv
 import matplotlib.pyplot as plt
 import datetime
+import math
+
 from preprocessing import cleanlist,ANSPs,split_data,get_data, read_data
 from complexity_calculation import calculate_scores_daily, calculate_scores_monthly, calculate_scores_yearly, total_complexity_by_ANSP, calculate_scores_weekly
 
@@ -119,6 +121,7 @@ def select_columns():
     print("For adjusted density \"8\" and then press ENTER")
     print("For structural index \"9\" and then press ENTER")
     print("For complexity flight hours \"10\" and then press ENTER")
+    print("For complexity interaction hours \"11\" and then press ENTER")
     choice = input("Type your choice (comma separated):")
 
     choice = [x.strip() for x in choice.split(',')]
@@ -132,42 +135,46 @@ def convert_choice(choice):
         if indicator == "1":
             indicator = 'VERTICAL_INTER_HRS'
             
-            title = 'Vertical interactions with time'
+            title = 'Vertical interaction hours'
         elif indicator == "2":
             indicator = 'HORIZ_INTER_HRS'
             
-            title = 'Horizontal interactions with time' 
+            title = 'Horizontal interaction hours' 
         elif indicator == "3":
             indicator = 'SPEED_INTER_HRS'
             
-            title = 'Speed interactions with time' 
+            title = 'Speed interaction hours' 
         elif indicator == "4":
             indicator = 'Vertical_score'
             
-            title = 'Vertical interaction scores with time' 
+            title = 'Vertical interaction score' 
         elif indicator == "5":
             indicator = 'Horizontal_score'
             
-            title = 'Horizontal interaction scores with time' 
+            title = 'Horizontal interaction score' 
         elif indicator == "6":
             indicator = 'Speed_score'
             
-            title = 'Speed interaction scores with time' 
+            title = 'Speed interaction score' 
         elif indicator == "7":
             indicator = 'Complexity_score'
             
-            title = 'Complexity score with time' 
+            title = 'Complexity score' 
         elif indicator == "8":
             indicator = 'Adjusted_density'
             
-            title = 'Adjusted density with time' 
+            title = 'Adjusted density' 
         elif indicator == "9":
             indicator = 'Structural_index'
-            title = 'Structural index with time'
+            title = 'Structural index'
 
         elif indicator == "10":
             indicator = 'CPLX_FLIGHT_HRS'
-            title = 'Complexity flight hours with time'
+            title = 'Complexity flight hours'
+
+        elif indicator == "11":
+            indicator = 'CPLX_INTER'
+            title = 'Complexity interaction hours'
 
         graph_info.append([indicator, title])
 
@@ -192,10 +199,36 @@ def plot_by_ANSP(data):
         axs[i].set_xlabel('Time')
         axs[i].set_title(graph_info[i][1])
         axs[i].grid()
-            
-        
-        #axs[i].set_ylim(0)
 
     
     plt.show()
 
+'''
+def plot_by_ANSP(data):
+    #Plots selected indicators over the entire period by ANSP 
+
+    data = total_complexity_by_ANSP(data)
+    choice = select_columns()
+    graph_info = convert_choice(choice)
+
+    half_of_graphs = math.ceil(len(graph_info)/2)
+
+    fig, axs = plt.subplots(nrows = half_of_graphs, ncols= 2, sharex='col')
+
+
+
+    for j in range(2):
+        for i in range(half_of_graphs):
+            
+                try:
+                    data[graph_info[i + j * half_of_graphs][0]].plot.bar(ax = axs[i][j])
+                    
+                    axs[i][j].set_xlabel('Time')
+                    axs[i][j].set_title(graph_info[i + half_of_graphs][1])
+                    axs[i][j].grid()
+                except:
+                    pass
+                
+
+    plt.show()
+'''
