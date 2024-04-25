@@ -1,13 +1,6 @@
-import csv
 import matplotlib.pyplot as plt
-import datetime
 from preprocessing import cleanlist,ANSPs,split_data,get_data, read_data
-from preprocessing.complexity_calculation import calculate_scores_daily, calculate_scores_monthly, calculate_scores_yearly, total_complexity_by_ANSP
-
-    
-    
-
-
+from complexity_calculation import calculate_scores_daily, calculate_scores_monthly, calculate_scores_yearly, total_complexity_by_ANSP
 
 def graphmultipledata(SelectedANSPs, ANSPsdf, ANSPs, graph_info, period):
 
@@ -54,12 +47,11 @@ def graphmultipledata(SelectedANSPs, ANSPsdf, ANSPs, graph_info, period):
     plt.show()
 
 
-def displaygraphs(ANSPsdf, ANSPs, period):
+def displaygraphs(ANSPsdf, ANSPs, period, SelectedANSPs = None):
     
-    SelectedANSPs = input("Which ANSPs would you want data from? (separate ANSPs by comma) ")
-
-    SelectedANSPs = [x.strip() for x in SelectedANSPs.split(',')]
-
+    if SelectedANSPs == None:
+        SelectedANSPs = input("Which ANSPs would you want data from? (separate ANSPs by comma) ")
+        SelectedANSPs = [x.strip() for x in SelectedANSPs.split(',')]
 
     choice = select_columns()
 

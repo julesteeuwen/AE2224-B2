@@ -1,6 +1,3 @@
-import pandas as pd
-
-
 def calculate_scores_daily(data):
     """
         Calculate individual interaction scores and complexity score for each day

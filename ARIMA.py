@@ -5,7 +5,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from pmdarima.preprocessing import FourierFeaturizer
 from pmdarima import pipeline
-from preprocessing.complexity_calculation import calculate_scores_monthly
+from complexity_calculation import calculate_scores_monthly
 
 
 # Load the data and split it into separate pieces
