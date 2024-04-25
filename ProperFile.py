@@ -8,7 +8,7 @@ def read_models(directory):
     files = os.listdir(directory)
     for f in files:
         #joblib.dump(arima, 'arima.pkl')
-        models[f]=joblib.load(f)
+        models[f]=joblib.load(f'{directory}/{f}')
     return models
 def get_models():
     SARIMA_models = read_models('SARIMAS')
