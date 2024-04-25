@@ -8,10 +8,13 @@ from pmdarima import pipeline
 from outliers_out import apply_moving_average
 
 
+
 # Load the data and split it into separate pieces
 dataframe = pd.read_csv('Datasets/2017-2019.csv', index_col= 'FLT_DATE',parse_dates=True, date_format='%d-%m-%Y',delimiter=';')
 dataframe = dataframe.dropna()  # drop missing values
+
 df1 = dataframe[dataframe['ENTITY_NAME'] == 'Skyguide']
+
 field = 'CPLX_INTER'
 #df1 = apply_moving_average(df1, window_size=7, perc=30, component = field)
 data = df1[field].values
@@ -27,6 +30,13 @@ pipe = pipeline.Pipeline([
                               ])
 pipe.fit(y=train.values)
 
+#score function
+score = 0
+predicted_values = pipe.predict(n_periods=len(test.values)).values
+for i in range(len(test)):
+    score += (test.values[i] - predicted_values[i])**2
+print(f'Score: {(score/len(test.values))**0.5}')
+
 # #############################################################################
 # Plot actual test vs. forecasts:
 plt.plot(train, color='blue',label='Train samples')
@@ -35,3 +45,4 @@ plt.plot(test.index,pipe.predict(n_periods=len(test.values)),label='Forecasts')
 plt.title('Actual test samples vs. forecasts')
 plt.legend()
 plt.show()
+

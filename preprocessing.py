@@ -1,10 +1,9 @@
 import pandas as pd
 import numpy as np
-import statsmodels as sm
 import matplotlib.pyplot as plt
-import seaborn as sns
 from statsmodels.tsa.stattools import adfuller
 from arch.unitroot import PhillipsPerron
+from scipy.stats import kruskal
 
 def read_data(filename):
     """
@@ -44,8 +43,7 @@ def get_data(ANSPName, ANSPsdf, ANSPs):
     Takes a given ANSP name and returns the dataframe for that ANSP
     """
     while ANSPName not in ANSPs:
-        print('Invalid ANSP name')
-        ANSPName = input('Input correct ANSP name')
+        raise ValueError("ANSP not found")
     ANSPIndex = ANSPs.index(ANSPName)
     return ANSPsdf[ANSPIndex], ANSPName
 
@@ -105,6 +103,35 @@ def Fuller_test(dataframe, parameter, plotting=False):
     else:
         print(f"PP-test:{parameter} is not stationary")
     '''
+
+
+def yearly_seasonality_check(series):
+    """
+    This function performs the Kruskal-Wallis H-test, to determine if the series has a seasonal component.
+    Input: Series that should be tested (not dataframe :))
+           Seasonal period (default 365)
+    Output: True / False
+    """
+    res = []
+    for i in series.index.year.unique():
+        res.append(series[series.index.year == i].values)
+    H_statistic, p_value = kruskal(*res)
+    print(p_value)
+    return p_value <= 0.05
+
+def yearly_seasonality_check(series):
+    """
+    This function performs the Kruskal-Wallis H-test, to determine if the series has a seasonal component.
+    Input: Series that should be tested (not dataframe :))
+           Seasonal period (default 365)
+    Output: True / False
+    """
+    res = []
+    for i in series.index.year.unique():
+        res.append(series[series.index.year == i].values)
+    H_statistic, p_value = kruskal(*res)
+    print(p_value)
+    return p_value <= 0.05
 
 #dataframe = read_data('Datasets/split_2014-2016.csv')
 #dataframe = dataframe[dataframe['ENTITY_NAME'] == "LVNL"]
