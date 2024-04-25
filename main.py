@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 from preprocessing import cleanlist,ANSPs,split_data,get_data, read_data
 from display_graphs import displaygraphs, plot_entire_dataset, plot_by_ANSP
-from complexity_calculation import calculate_scores_daily, calculate_scores_monthly, calculate_scores_yearly
+from complexity_calculation import calculate_scores_weekly
 #from EWMA import plot_decompose
 
 
@@ -23,7 +23,7 @@ ANSPsdf = split_data(TrafficData1, ANSPs)
 
 
 #for plotting data selected 'day', 'month' or 'year'
-#plot_entire_dataset(TrafficData1, 'month')
-#displaygraphs(ANSPsdf, ANSPs, 'month')
-#plot_by_ANSP(TrafficData1)
-
+#plot_entire_dataset(TrafficData1, 'day')
+#displaygraphs(ANSPsdf, ANSPs, 'week')
+plot_by_ANSP(TrafficData1)
+#calculate_scores_weekly(TrafficData1)
