@@ -83,7 +83,7 @@ test_ansp = df_ansp[slice:]
 
 # Fit and predict model
 model = ExponentialSmoothing(train_ansp, trend='add', seasonal='add', seasonal_periods=365).fit()
-test_predictions = model.forecast(365)
+test_predictions = model.forecast(3 * 365)
 
 # Plot results
 train_ansp['VERTICAL_INTER_HRS'].plot(legend=True, label='TRAIN')
