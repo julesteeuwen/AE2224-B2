@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import datetime
 
 from preprocessing import cleanlist,ANSPs,split_data,get_data, read_data
-from complexity_calculation import calculate_scores_daily, calculate_scores_monthly, calculate_scores_yearly
+from preprocessing.complexity_calculation import calculate_scores_daily, calculate_scores_monthly, calculate_scores_yearly
 
 import pandas as pd
 
