@@ -38,24 +38,26 @@ def  get_model(ASNP, field, model_type):
     else:
         return None
     
+def get_mses():
+    SARIMA_models, EWMA_models = get_models()
+    n = len(get_test_data('Skyguide','CPLX_FLIGHT_HRS'))
+    mses = {}
+    for asnp in ASNPs:
+        test_data={}
+        predicted_data={}
+        for field in ['VERTICAL_INTER_HRS', 'HORIZ_INTER_HRS', 'SPEED_INTER_HRS', 'CPLX_INTER', 'CPLX_FLIGHT_HRS']:
+            test_data[field] =get_test_data(asnp,field)
+            predicted_data[field] = SARIMA_models[asnp + field+'.pkl'].predict(n_periods=n)
+        true = calc_complex(test_data)
+        prediction = calc_complex(predicted_data)
+        mses[asnp] = mean_squared_error(true, prediction)
+    return mses    
+# #############################################################################
 #get the mses of the models
 
 #get the models
 SARIMA_models, EWMA_models = get_models()
 
 #get the complexity scores for the test and SARIMA prediction data
-n = len(get_test_data('Skyguide','CPLX_FLIGHT_HRS'))
-mses = {}
-for asnp in ASNPs:
-    test_data={}
-    predicted_data={}
-    for field in ['VERTICAL_INTER_HRS', 'HORIZ_INTER_HRS', 'SPEED_INTER_HRS', 'CPLX_INTER', 'CPLX_FLIGHT_HRS']:
-        test_data[field] =get_test_data(asnp,field)
-        predicted_data[field] = SARIMA_models[asnp + field+'.pkl'].predict(n_periods=n)
-    true = calc_complex(test_data)
-    prediction = calc_complex(predicted_data)
-    mses[asnp] = mean_squared_error(true, prediction)
-    print(f'mean squared error for {asnp}: ', mses[asnp])
 
-
-print(mses)
+print(get_mses())
