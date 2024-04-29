@@ -8,6 +8,13 @@ from pmdarima.preprocessing import FourierFeaturizer
 from pmdarima import pipeline
 import joblib
 
+def get_test_data(ANSP, field):
+    dataframe = pd.read_csv('Datasets/2017-2019.csv', index_col= 'FLT_DATE',parse_dates=True, date_format='%d-%m-%Y',delimiter=';')
+    dataframe = dataframe.dropna()  # drop missing values
+    df1 = dataframe[dataframe['ENTITY_NAME'] == ANSP]
+    train, test = model_selection.train_test_split(df1[field], train_size=0.75)
+    return test
+
 def get_SARIMA(ANSP, field,graph=False,fake=False):
     print(f'Getting SARIMA model for {ANSP} and {field}')
     print('Wait a moment... or two.... or three...')
@@ -15,7 +22,6 @@ def get_SARIMA(ANSP, field,graph=False,fake=False):
     dataframe = pd.read_csv('Datasets/2017-2019.csv', index_col= 'FLT_DATE',parse_dates=True, date_format='%d-%m-%Y',delimiter=';')
     dataframe = dataframe.dropna()  # drop missing values
     df1 = dataframe[dataframe['ENTITY_NAME'] == ANSP]
-    data = df1[field].values
     train, test = model_selection.train_test_split(df1[field], train_size=0.75)
 
     # #############################################################################
