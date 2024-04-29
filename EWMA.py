@@ -95,5 +95,48 @@ def plot_forecast_HWES3_ADD(df, period=365, field='CPLX_INTER'):
 df = pd.read_csv('Datasets/split_2014-2016.csv', index_col='FLT_DATE', parse_dates=True, date_format='%d-%m-%Y')
 df.dropna(inplace=True)
 
-# Plotting
-plot_forecast_HWES3_ADD(df)
+# Filtering data and selecting an ANSP
+df_vert = df.loc[:, "VERTICAL_INTER_HRS"].to_frame()
+df_ansp = df_vert.loc[df['ENTITY_NAME'] == 'ROMATSA'].copy()
+df_ansp.index.freq = pd.infer_freq(df_ansp.index)
+
+decomp_data = plot_decompose(df_ansp)
+print(decomp_data.trend)
+
+
+# df_ansp.loc[:, "SMA"] = SMA(df_ansp, 50)
+# df_ansp.loc[:, "CMA"] = CMA(df_ansp.loc[:, 'VERTICAL_INTER_HRS'])
+# df_ansp.loc[:, "EWMA"] = EWMA(df_ansp.loc[:, 'VERTICAL_INTER_HRS'], 50)
+
+# print(HWES3_ADD(df_ansp).size)
+# print(df_ansp.size)
+
+# Split data
+slice = int(0.8*len(df_ansp))
+train_ansp = df_ansp[:slice]
+test_ansp = df_ansp[slice:]
+
+# Fit and predict model
+model = ExponentialSmoothing(train_ansp, trend='add', seasonal='add', seasonal_periods=365).fit()
+test_predictions = model.forecast(365)
+
+# Plot results
+train_ansp['VERTICAL_INTER_HRS'].plot(legend=True, label='TRAIN')
+test_ansp['VERTICAL_INTER_HRS'].plot(legend=True, label='TEST')
+test_predictions.plot(legend=True, label='pred')
+
+
+
+# df_ansp.loc[:, "HWES3_ADD"] = HWES3_ADD(df_ansp)
+# df_ansp.loc[:, "HWES3_MUL"] = HWES3_MUL(df_ansp[["VERTICAL_INTER_HRS"]])
+
+
+
+# df_ansp[["HWES3_MUL"]] = HWES3_MUL(df_ansp)
+
+
+
+
+# df_ansp.plot()
+plt.show()
+
