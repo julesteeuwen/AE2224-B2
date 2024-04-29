@@ -16,14 +16,14 @@ dataframe = dataframe.dropna()  # drop missing values
 df1 = dataframe[dataframe['ENTITY_NAME'] == 'Skyguide']
 
 field = 'CPLX_INTER'
-#df1 = apply_moving_average(df1, window_size=7, perc=30, component = field)
+df1 = apply_moving_average(df1, window_size=30, perc=30, component = field)
 data = df1[field].values
 train, test = model_selection.train_test_split(df1[field], train_size=0.75)
 
 # #############################################################################
 
 pipe = pipeline.Pipeline([
-    ("fourier", FourierFeaturizer(m=365,k=5)),
+    ("fourier", FourierFeaturizer(m=365)),
     ("arima", pm.AutoARIMA(stepwise=True, trace=10, error_action="ignore",
                               seasonal=False,  # because we use Fourier
                               suppress_warnings=True))
