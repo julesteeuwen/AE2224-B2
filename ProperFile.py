@@ -1,8 +1,10 @@
 import os
 import joblib
 from autoArima import get_SARIMA
+from sklearn.metrics import mean_squared_error
 fields = ['CPLX_FLIGHT_HRS','CPLX_INTER','VERTICAL_INTER_HRS','HORIZ_INTER_HRS','SPEED_INTER_HRS']
 ASNPs = ['Skyguide','MUAC','DSNA']
+directory = 'SARIMAS'
 def get_EWMA(ASNP, field):
     return None
 def read_models(directory):
@@ -23,5 +25,16 @@ def get_models():
             if key not in EWMA_models:
                 EWMA_models[key] = get_EWMA(ASNP, field)
     return SARIMA_models, EWMA_models
-
-mdla,mdle=get_models()
+def  get_model(ASNP, field, model_type):
+    if model_type == 'SARIMA':
+        files = os.listdir(directory)
+        if ASNP + field + '.pkl' not in files:
+            return get_SARIMA(ASNP, field)
+        else:
+            return joblib.load(f'{directory}/{ASNP + field + '.pkl'}')
+    elif model_type == 'EWMA':
+        return None
+    else:
+        return None
+    
+#get the mses of the models
