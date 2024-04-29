@@ -1,56 +1,48 @@
-import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from statsmodels.tsa.stattools import adfuller
-from statsmodels.tsa.arima_model import ARIMA
-import statsmodels.api as sm
-from statsmodels.graphics.tsaplots import plot_acf,plot_pacf
+import pmdarima as pm
+from pmdarima import model_selection
+import numpy as np
+from matplotlib import pyplot as plt
+from pmdarima.preprocessing import FourierFeaturizer
+from pmdarima import pipeline
+from complexity_calculation import calculate_scores_monthly
 
-#import data
-df = pd.read_csv('Datasets/AAPL.csv')
-df = df[['Date', 'Close']]
-df['Date'] = pd.to_datetime(df['Date'], format = '%Y-%m-%d')
-df.set_index(['Date'], inplace = True)
 
-#check stationarity
-test_result=adfuller(df['Close'])
+# Load the data and split it into separate pieces
+dataframe = pd.read_csv('Datasets/2017-2019.csv', index_col= 'FLT_DATE',parse_dates=True, date_format='%d-%m-%Y',delimiter=';')
+dataframe = dataframe.dropna()  # drop missing values
+df1 = dataframe[dataframe['ENTITY_NAME'] == 'LVNL']
+df1 = calculate_scores_monthly(df1)
+print(df1)
 
-def adfuller_test(sales):
-    result=adfuller(sales)
-    labels = ['ADF Test Statistic','p-value','#Lags Used','Number of Observations Used']
-    for value,label in zip(result,labels):
-        print(label+' : '+str(value) )
-    if result[1] <= 0.05:
-        print("P value is less than 0.05 that means we can reject the null hypothesis(Ho). Therefore we can conclude that data has no unit root and is stationary")
-    else:
-        print("Weak evidence against null hypothesis that means time series has a unit root which indicates that it is non-stationary ")
 
-#adfuller_test(df['Close'])
+field = 'CPLX_INTER'
+data = df1[field].values
+train, test = model_selection.train_test_split(df1[field], train_size=0.75)
 
-#Differencing
-df['Daily First Difference']=df['Close']-df['Close'].shift(1)
-#adfuller_test(df['Daily First Difference'].dropna())
+# #############################################################################
 
-#fig = plt.figure(figsize=(12,8))
-#ax1 = fig.add_subplot(211)
-#fig = sm.graphics.tsa.plot_acf(df['Daily First Difference'].iloc[13:],lags=40,ax=ax1)
-#ax2 = fig.add_subplot(212)
-#fig = sm.graphics.tsa.plot_pacf(df['Daily First Difference'].iloc[13:],lags=40,ax=ax2)
-#plt.show()
+pipe = pipeline.Pipeline([
+    ("fourier", FourierFeaturizer(m=12)),
+    ("arima", pm.AutoARIMA(stepwise=True, trace=10, error_action="ignore",
+                              seasonal=False,  # because we use Fourier
+                              suppress_warnings=True))
+                              ])
+pipe.fit(y=train.values)
 
-model=sm.tsa.statespace.SARIMAX(df['Close'],order=(1, 1, 1),seasonal_order=(1,1,1,12))
-results=model.fit()
-print(results.summary())
+#score function
+score = 0
+predicted_values = pipe.predict(n_periods=len(test.values)).values
+for i in range(len(test)):
+    score += (test.values[i] - predicted_values[i])**2
+print(f'Score: {score/len(test.values)}')
 
-#residuals = pd.DataFrame(results.resid)
-#residuals.plot()
-#plt.show()
-# density plot of residuals
-#residuals.plot(kind='kde')
-#plt.show()
-# summary stats of residuals
-#print(residuals.describe())
-
-df['forecast']=results.predict(start=200,end=250,dynamic=True)
-df[['Close', 'forecast']].plot(figsize=(12,8))
+# #############################################################################
+# Plot actual test vs. forecasts:
+plt.plot(train, color='blue',label='Train samples')
+plt.plot(test, color='red',label='Test samples')
+plt.plot(test.index,pipe.predict(n_periods=len(test.values)),label='Forecasts')
+plt.title('Actual test samples vs. forecasts')
+plt.legend()
 plt.show()
+
