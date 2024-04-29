@@ -1,6 +1,7 @@
 import os
 import joblib
-from autoArima import get_SARIMA
+from Complexity import calc_complex
+from autoArima import get_SARIMA, get_test_data
 from sklearn.metrics import mean_squared_error
 fields = ['CPLX_FLIGHT_HRS','CPLX_INTER','VERTICAL_INTER_HRS','HORIZ_INTER_HRS','SPEED_INTER_HRS']
 ASNPs = ['Skyguide','MUAC','DSNA']
@@ -38,3 +39,23 @@ def  get_model(ASNP, field, model_type):
         return None
     
 #get the mses of the models
+
+#get the models
+SARIMA_models, EWMA_models = get_models()
+
+#get the complexity scores for the test and SARIMA prediction data
+n = len(get_test_data('Skyguide','CPLX_FLIGHT_HRS'))
+mses = {}
+for asnp in ASNPs:
+    test_data={}
+    predicted_data={}
+    for field in ['VERTICAL_INTER_HRS', 'HORIZ_INTER_HRS', 'SPEED_INTER_HRS', 'CPLX_INTER', 'CPLX_FLIGHT_HRS']:
+        test_data[field] =get_test_data(asnp,field)
+        predicted_data[field] = SARIMA_models[asnp + field+'.pkl'].predict(n_periods=n)
+    true = calc_complex(test_data)
+    prediction = calc_complex(predicted_data)
+    mses[asnp] = mean_squared_error(true, prediction)
+    print(f'mean squared error for {asnp}: ', mses[asnp])
+
+
+print(mses)
