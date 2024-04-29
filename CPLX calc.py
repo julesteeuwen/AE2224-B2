@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 #get values
-def get_values(file, ansp):
+def get_values(file, ansp, sensi_parameter = 0.9):
     dataframe = pd.read_csv(file, index_col= 'FLT_DATE',parse_dates=True, date_format='%d-%m-%Y',delimiter=';').dropna()
     dataframe = dataframe[dataframe['ENTITY_NAME'] == ansp]
     VERTICAL_INTER_HRS = dataframe['VERTICAL_INTER_HRS']
@@ -24,6 +24,7 @@ def calc_values(file, ansp):
     HORIZ_SCORE = HORIZ_INTER_HRS/ CPLX_INTER
     SPEED_SCORE = SPEED_INTER_HRS/ CPLX_INTER
     COMPLEX_SCORE = (VERTICAL_INTER_HRS + HORIZ_INTER_HRS + SPEED_INTER_HRS)*60 / CPLX_FLIGHT_HRS
+
     return Adj_Density,Struc_Index, VERTICAL_INTER, HORIZ_INTER, SPEED_INTER, VERTICAL_SCORE, HORIZ_SCORE, SPEED_SCORE, COMPLEX_SCORE
 
 #Plotting
@@ -34,7 +35,8 @@ def plotting(file, ansp, Plot_Copmlex = True, Plot_Adj_Density = False, Plot_Str
         plt.legend()
         plt.title('Complexity Score')
     if Plot_Adj_Density:
-        plt.plot(Adj_Density)
+        plt.plot(Adj_Density, label = "Adjusted Density", color = 'red')
+        plt.legend()
         plt.title('Adjusted Density')
     if Plot_Struc_Index:    
         plt.plot(Struc_Index)
@@ -57,7 +59,6 @@ def plotting(file, ansp, Plot_Copmlex = True, Plot_Adj_Density = False, Plot_Str
     if Plot_Speed_Score:
         plt.plot(SPEED_SCORE)
         plt.title('Speed Score')
-    plt.show()
 
 #find maximimum value of the parameter and ansp with the maximum value
 def find_max_complex(file):
@@ -72,4 +73,16 @@ def find_max_complex(file):
     print(f'The maximum value of the parameter is {max_parameter} and the ANSP with the maximum value is {max_ansp}')
     return max_parameter, max_ansp
 
-plotting('Datasets/split_2017-2019.csv',"Skyguide")S
+#make an adjusted data frame for sensitivity analysis by multiplying with a parameter
+def Sensitivity_file(file, parameter):
+    dataframe = pd.read_csv(file, index_col= 'FLT_DATE',parse_dates=True, date_format='%d-%m-%Y',delimiter=';').dropna()
+    dataframe['VERTICAL_INTER_HRS'] = dataframe['VERTICAL_INTER_HRS']*parameter
+    dataframe['HORIZ_INTER_HRS'] = dataframe['HORIZ_INTER_HRS']*parameter
+    dataframe['SPEED_INTER_HRS'] = dataframe['SPEED_INTER_HRS']*parameter
+    return dataframe
+
+
+plotting('Datasets/2017-2019.csv',"Skyguide")
+Adj_file = Sensitivity_file('Datasets/2017-2019.csv', 0.9)
+plt.show()
+
