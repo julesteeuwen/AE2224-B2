@@ -15,7 +15,6 @@ def read_models(directory):
 def get_models():
     SARIMA_models = read_models('SARIMAS')
     EWMA_models = read_models('EWMAS')
-    
     for field in fields:
         for ASNP in ASNPs:
             key = ASNP + field + '.pkl'
@@ -24,3 +23,5 @@ def get_models():
             if key not in EWMA_models:
                 EWMA_models[key] = get_EWMA(ASNP, field)
     return SARIMA_models, EWMA_models
+
+mdla,mdle=get_models()
