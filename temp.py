@@ -3,15 +3,6 @@ from sklearn.metrics import mean_squared_error as mse
 from sktime.utils.plotting import plot_series
 import matplotlib.pyplot as plt
 
-train = pd.read_pickle('train.pkl')
-test = pd.read_pickle('test.pkl')
-predicted_values = pd.read_pickle('predicted.pkl')
-
-# Calculate MSE
-MSE = mse(test, predicted_values)
-
-print(f"MSE: {MSE}")
-
-# Plot the prediction
-# plot_series(train, test, predicted_values, labels=['Train', 'Test', 'Predicted'])
-plt.show()
+# Read data
+df = pd.read_csv('Datasets/split_2017-2019.csv', index_col='FLT_DATE', parse_dates=True, date_format='%d-%m-%Y')
+df.dropna(inplace=True)

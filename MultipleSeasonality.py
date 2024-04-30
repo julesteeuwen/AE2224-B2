@@ -53,34 +53,94 @@ def forecast_TBATS(df, periods):
 
     return train, test, predicted_values
 
-def calculateModel():
+def computeModel(df, ANSP, field, periods=[365,7]):
+    df_ansp = df.loc[df['ENTITY_NAME'] == ANSP].copy()
+
+    df_scores = calculate_scores_daily(df_ansp)
+
+    df_field = df_scores.loc[:, field].to_frame()
+    df_field.index.freq = pd.infer_freq(df_field.index)
+
+    slice = int(0.75 * len(df_field))
+    train = df_field[:slice]
+    test = df_field[slice:]
+
+    model = StatsForecastAutoTBATS(periods).fit(train)
+    pickle.dump(model, open(f"TBATS/{ANSP}{field}.pkl", 'wb'))
+    return model
+
+
+def main(plotting=False):
+    fields = ['CPLX_FLIGHT_HRS', 'CPLX_INTER', 'HORIZ_INTER_HRS', 'SPEED_INTER_HRS', 'VERTICAL_INTER_HRS', 'Complexity_score']
+    ANSPs = ['Skyguide', 'DSNA', 'MUAC']
+
+    # Importing data
+    df = pd.read_csv('Datasets/split_2017-2019.csv', index_col='FLT_DATE', parse_dates=True, date_format='%d-%m-%Y')
+    df.dropna(inplace=True)
+    df = calculate_scores_daily(df)
+
     for ANSP in ANSPs:
+        predicted_values = pd.DataFrame()
+        test_values = pd.DataFrame()
+        train_values = pd.DataFrame()
+        mse_componentwise = None
+        mse_total = None
+
         for field in fields:
-            # Selecting an ANSP
+            # Check if model already exists
+            try:
+                model = pickle.load(open(f"TBATS/YEAR_WEEK/{ANSP}{field}.pkl", 'rb'))
+            except:
+                model = computeModel(df, ANSP, field)
+
+            # Get test data
             df_ansp = df.loc[df['ENTITY_NAME'] == ANSP].copy()
-
-            # Calculate daily complexity scores
-            df_scores = calculate_scores_daily(df_ansp)
-
-            # Filtering data and selecting an ANSP
-            df_field = df_scores[field]
+            df_field = df_ansp.loc[:, field].to_frame()
             df_field.index.freq = pd.infer_freq(df_field.index)
-            # Split data
-            slice = int(0.75*len(df_ansp))
-            train = df[:slice].copy()
-            test = df[slice:]
+            slice = int(0.75 * len(df_field))
+            train = df_field[:slice]
+            test = df_field[slice:]
 
-            model = StatsForecastAutoTBATS(train).fit()
+            # Update dataframe
+            fh = np.arange(len(test))
+            predicted_values[field] = model.predict(fh)
+            test_values[field] = test
+            train_values[field] = train
 
-            # Save to Pickle
-            pickle.dump(model, open(f"TBATS/{ANSP}{field}.pkl", 'wb'))
+            if field == 'Complexity_score':
+                mse_total = mse(test, predicted_values[field])
 
-# Variables
-periods = [365, 7]
-fields = ['CPLX_FLIGHT_HRS', 'CPLX_INTER', 'HORIZ_INTER_HRS', 'SPEED_INTER_HRS', 'VERTICAL_INTER_HRS']
-ANSPs = ['Skyguide', 'DSNA', 'MUAC']
 
-# Importing data
-df = pd.read_csv('Datasets/split_2017-2019.csv', index_col='FLT_DATE', parse_dates=True, date_format='%d-%m-%Y')
-df.dropna(inplace=True)
+        predicted_complexity = calculate_scores_daily(predicted_values.copy())
 
+        test_complexity = calculate_scores_daily(test_values)
+        mse_componentwise = mse(test_complexity['Complexity_score'], predicted_complexity['Complexity_score'])
+
+        # Plotting
+        if plotting:
+            fig, axs = plt.subplots(2, 1) 
+            axs[0].set_title(f'{ANSP} - Componentwise Prediction')
+            train_values['Complexity_score'].plot(legend=True, label='Train', ax=axs[0])
+            test_complexity['Complexity_score'].plot(legend=True, label='Test', ax=axs[0])
+            predicted_complexity['Complexity_score'].plot(legend=True, label='Predicted', ax=axs[0])
+
+            axs[1].set_title(f'{ANSP} - Total Prediction')
+            train_values['Complexity_score'].plot(legend=True, label='Train', ax=axs[1])
+            test_complexity['Complexity_score'].plot(legend=True, label='Test', ax=axs[1])
+            predicted_values['Complexity_score'].plot(legend=True, label='Predicted', ax=axs[1])
+            plt.show()
+
+            # Plot componentwise component predictions in one figure
+            fig, axs = plt.subplots(len(fields), 1)
+            for field in fields:
+                axs[fields.index(field)].set_title(f'{ANSP} - {field}')
+                train_values[field].plot(legend=True, label='Train', ax=axs[fields.index(field)])
+                test_values[field].plot(legend=True, label='Test', ax=axs[fields.index(field)])
+                predicted_values[field].plot(legend=True, label='Predicted', ax=axs[fields.index(field)])
+            plt.show()
+
+        print(f"{ANSP} Total MSE: {mse_total}")
+        print(f"{ANSP} Componentwise MSE: {mse_componentwise}")
+
+if __name__ == '__main__':
+    main(plotting=True)
