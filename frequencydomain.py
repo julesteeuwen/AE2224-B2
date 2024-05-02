@@ -1,6 +1,7 @@
 from display_graphs import displaygraphs, plot_entire_dataset, plot_by_ANSP
 from preprocessing import cleanlist,ANSPs,split_data,get_data, read_data
 from complexity_calculation import calculate_scores_daily, calculate_scores_monthly, calculate_scores_yearly, total_complexity_by_ANSP, calculate_scores_weekly
+from EWMA import plot_decompose
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -15,9 +16,11 @@ grouped = df.groupby('ENTITY_NAME')
 
 # Extract one of the groups, for example, the first group
 
-selected_group = grouped.get_group('Skyguide')
+selected_group = grouped.get_group('ANS CR')
 
 data = selected_group['Complexity_score']
+
+# plot_decompose(data)
 
 mean = np.mean(data)
 
@@ -27,7 +30,7 @@ window_size = 365
 
 
 # Calculate the moving average
-data = data.rolling(window=window_size, min_periods=window_size).mean()
+#data = data.rolling(window=window_size, min_periods=window_size).mean()
 data = data.dropna()
 
 
