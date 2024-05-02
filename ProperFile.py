@@ -1,10 +1,14 @@
 import os
 import joblib
+import matplotlib.pyplot as plt 
+import pandas as pd
 from Complexity import calc_complex
 from autoArima import get_SARIMA, get_test_data
-from sklearn.metrics import mean_squared_error
-fields = ['CPLX_FLIGHT_HRS','CPLX_INTER','VERTICAL_INTER_HRS','HORIZ_INTER_HRS','SPEED_INTER_HRS']
-ASNPs = ['Skyguide','MUAC','DSNA']
+from sklearn.metrics import mean_absolute_percentage_error, mean_squared_error
+from EWMA import SMA
+fields = ['COMPLEXITY_SCORE','CPLX_FLIGHT_HRS','CPLX_INTER','VERTICAL_INTER_HRS','HORIZ_INTER_HRS','SPEED_INTER_HRS']
+#ASNPs = ['Skyguide','MUAC','DSNA']
+ASNPs = ['Albcontrol', 'NAVIAIR', 'LGS', 'Slovenia Control', 'MOLDATSA', 'LVNL', 'DSNA', 'LFV', 'LPS', 'ENAIRE', 'EANS', 'NATS (Continental)', 'Sakaeronavigatsia', 'ARMATS', 'NAV Portugal (Continental)', 'M-NAV', 'skeyes', 'DHMI', 'ENAV', 'DFS', 'DCAC Cyprus', 'HungaroControl', 'MUAC', 'Avinor (Continental)', 'SMATSA', 'ROMATSA', 'Skyguide', 'ANS Finland', 'Croatia Control', 'Oro Navigacija', 'HCAA', 'Austro Control', 'IAA', 'ANS CR', 'UkSATSE', 'MATS', 'PANSA', 'BULATSA']
 directory = 'SARIMAS'
 def get_EWMA(ASNP, field):
     return None
@@ -38,7 +42,8 @@ def  get_model(ASNP, field, model_type,fake=False):
     else:
         return None
     
-def get_mses():
+def get_mses(parametered=True):
+    #returns the mean squared errors of the models (SARIMA for each comp, SARIMA for the complexity score)
     SARIMA_models, EWMA_models = get_models()
     n = len(get_test_data('Skyguide','CPLX_FLIGHT_HRS'))
     mses = {}
@@ -47,17 +52,85 @@ def get_mses():
         predicted_data={}
         for field in ['VERTICAL_INTER_HRS', 'HORIZ_INTER_HRS', 'SPEED_INTER_HRS', 'CPLX_INTER', 'CPLX_FLIGHT_HRS']:
             test_data[field] =get_test_data(asnp,field)
-            predicted_data[field] = SARIMA_models[asnp + field+'.pkl'].predict(n_periods=n)
+            if parametered:
+                predicted_data[field] = SARIMA_models[asnp + field+'.pkl'].predict(n_periods=n)
         true = calc_complex(test_data)
-        prediction = calc_complex(predicted_data)
-        mses[asnp] = mean_squared_error(true, prediction)
-    return mses    
+        if parametered:
+            prediction = calc_complex(predicted_data)
+        prediction2 = SARIMA_models[asnp + 'COMPLEXITY_SCORE'+'.pkl'].predict(n_periods=n)
+        mses[asnp] = mean_squared_error(true, prediction) if parametered else mean_squared_error(true, prediction2)
+    return mses  
+def get_mapes(parametered=True):
+    #returns the mean squared errors of the models (SARIMA for each comp, SARIMA for the complexity score)
+    SARIMA_models, EWMA_models = get_models()
+    n = len(get_test_data('Skyguide','CPLX_FLIGHT_HRS'))
+    mapes = {}
+    for asnp in ASNPs:
+        test_data={}
+        predicted_data={}
+        for field in ['VERTICAL_INTER_HRS', 'HORIZ_INTER_HRS', 'SPEED_INTER_HRS', 'CPLX_INTER', 'CPLX_FLIGHT_HRS']:
+            test_data[field] =get_test_data(asnp,field)
+            if parametered:
+                predicted_data[field] = SARIMA_models[asnp + field+'.pkl'].predict(n_periods=n)
+        true = calc_complex(test_data)
+        if parametered:
+            prediction = calc_complex(predicted_data)
+        prediction2 = SARIMA_models[asnp + 'COMPLEXITY_SCORE'+'.pkl'].predict(n_periods=n)
+        mapes[asnp] = mean_absolute_percentage_error(true, prediction) if parametered else mean_absolute_percentage_error(true, prediction2)
+    return mapes
+
+def predict_complexity(asnp,n,fake=False,parametered=True):
+    '''
+    asnp: str
+    n: int the number of days to predict the complexity for (2yrs+n days)
+    prediscts the complexity of the ASNP for the next n days
+    '''
+    SARIMA_models, EWMA_models = get_models()
+    predicted_data={}
+    n +=len(get_test_data('Skyguide','CPLX_FLIGHT_HRS'))
+    if parametered:
+        for field in ['VERTICAL_INTER_HRS', 'HORIZ_INTER_HRS', 'SPEED_INTER_HRS', 'CPLX_INTER', 'CPLX_FLIGHT_HRS']:
+            predicted_data[field] = SARIMA_models[asnp + field+'.pkl'].predict(n_periods=n)
+        #print(predicted_data)
+        return calc_complex(predicted_data)
+    return SARIMA_models[asnp + 'COMPLEXITY_SCORE'+'.pkl'].predict(n_periods=n)
+      
+
+def plot_complexity(asnp,n=365,parametered=True):
+    '''
+    asnp: str
+    plots the complexity of the asnp for the next 365 days
+    '''
+    datatrain={}
+    datatest={}
+    for field in ['VERTICAL_INTER_HRS', 'HORIZ_INTER_HRS', 'SPEED_INTER_HRS', 'CPLX_INTER', 'CPLX_FLIGHT_HRS']:
+        datatest[field] = get_test_data(asnp,field)
+        datatrain[field] = get_test_data(asnp,field,return_train=True)
+    a = pd.DataFrame(predict_complexity(asnp,n=365,parametered=parametered))
+    a.index= pd.date_range(datatest['CPLX_INTER'].index[0], periods=len(a), freq="d")
+    #plot train data complexity
+    plt.plot(SMA(calc_complex(datatrain),7), color='blue',label='Train samples')
+    #plot test data complexity
+    plt.plot(SMA(calc_complex(datatest),7), color='red',label='Test samples')
+    #plot predicted complexity
+    plt.plot(SMA(a,7),label='Forecasts')
+    #add the mse to the title
+    plt.title(f'SARIMA predictions of complexity for 1 year\nfor {asnp} (mape = {get_mapes(parametered=parametered)[asnp]})')
+    plt.legend()
+    #make the y axis begin at 0
+    plt.ylim(0)
+    #save the plot
+    plt.savefig(f'SARIMA_GRAPHS/{asnp}_complexity_{'parametered' if parametered else 'not_parametered'}.png')
+    plt.cla()
+    #plt.show()
+
 # #############################################################################
-#get the mses of the models
 
 #get the models
 SARIMA_models, EWMA_models = get_models()
 
-#get the complexity scores for the test and SARIMA prediction data
+for asnp in ASNPs:
+    plot_complexity(asnp,parametered=False)
+    plot_complexity(asnp,parametered=True)
 
-print(get_mses())
+#SMA(df,7)
