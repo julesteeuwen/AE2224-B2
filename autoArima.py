@@ -7,12 +7,16 @@ from matplotlib import pyplot as plt
 from pmdarima.preprocessing import FourierFeaturizer
 from pmdarima import pipeline
 import joblib
+from Complexity import calc_complex
 
-def get_test_data(ANSP, field):
+def get_test_data(ANSP, field,return_train=False):
     dataframe = pd.read_csv('Datasets/2017-2019.csv', index_col= 'FLT_DATE',parse_dates=True, date_format='%d-%m-%Y',delimiter=';')
     dataframe = dataframe.dropna()  # drop missing values
-    df1 = dataframe[dataframe['ENTITY_NAME'] == ANSP]
+    df1 = dataframe[dataframe['ENTITY_NAME'] == ANSP].copy()
+    df1['COMPLEXITY_SCORE'] = calc_complex({'VERTICAL_INTER_HRS': df1['VERTICAL_INTER_HRS'], 'HORIZ_INTER_HRS': df1['HORIZ_INTER_HRS'], 'SPEED_INTER_HRS': df1['SPEED_INTER_HRS'], 'CPLX_INTER': df1['CPLX_INTER'], 'CPLX_FLIGHT_HRS': df1['CPLX_FLIGHT_HRS']})
     train, test = model_selection.train_test_split(df1[field], train_size=0.75)
+    if return_train:
+        return train
     return test
 
 def get_SARIMA(ANSP, field,graph=False,fake=False):
@@ -21,14 +25,15 @@ def get_SARIMA(ANSP, field,graph=False,fake=False):
     # Load the data and split it into separate pieces
     dataframe = pd.read_csv('Datasets/2017-2019.csv', index_col= 'FLT_DATE',parse_dates=True, date_format='%d-%m-%Y',delimiter=';')
     dataframe = dataframe.dropna()  # drop missing values
-    df1 = dataframe[dataframe['ENTITY_NAME'] == ANSP]
+    df1 = dataframe[dataframe['ENTITY_NAME'] == ANSP].copy()
+    df1['COMPLEXITY_SCORE'] = calc_complex({'VERTICAL_INTER_HRS': df1['VERTICAL_INTER_HRS'], 'HORIZ_INTER_HRS': df1['HORIZ_INTER_HRS'], 'SPEED_INTER_HRS': df1['SPEED_INTER_HRS'], 'CPLX_INTER': df1['CPLX_INTER'], 'CPLX_FLIGHT_HRS': df1['CPLX_FLIGHT_HRS']})
     train, test = model_selection.train_test_split(df1[field], train_size=0.75)
 
     # #############################################################################
 
     pipe = pipeline.Pipeline([
         ("fourier", FourierFeaturizer(m=365)),
-        ("arima", pm.AutoARIMA(stepwise=True, trace=10, error_action="ignore",
+        ("arima", pm.AutoARIMA(stepwise=True, trace=0, error_action="ignore",
                                   seasonal=False,  # because we use Fourier
                                   suppress_warnings=True))
                                   ])
