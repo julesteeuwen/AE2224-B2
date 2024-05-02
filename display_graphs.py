@@ -2,6 +2,7 @@ import csv
 import matplotlib.pyplot as plt
 import datetime
 import math
+import numpy as np
 
 from preprocessing import cleanlist,ANSPs,split_data,get_data, read_data
 from complexity_calculation import calculate_scores_daily, calculate_scores_monthly, calculate_scores_yearly, total_complexity_by_ANSP, calculate_scores_weekly
@@ -182,24 +183,48 @@ def convert_choice(choice):
 
 
     
-def plot_by_ANSP(data):
+def plot_by_ANSP(data, vertsens = 1, hortsens = 1, speedsens = 1):
     #Plots selected indicators over the entire period by ANSP 
 
-    data = total_complexity_by_ANSP(data)
+    data = total_complexity_by_ANSP(data, vertsens, hortsens, speedsens)
     choice = select_columns()
     graph_info = convert_choice(choice)
+    
+    # fig, axs = plt.subplots(nrows = len(graph_info), sharex='col')
 
-    fig, axs = plt.subplots(nrows = len(graph_info), sharex='col')
 
-
-    for i in range(len(graph_info)):
+    # for i in range(len(graph_info)):
         
-        data[graph_info[i][0]].plot.bar(ax = axs[i])
+    #     data[graph_info[i][0]].plot.bar(ax = axs[i])
         
-        axs[i].set_xlabel('Time')
-        axs[i].set_title(graph_info[i][1])
-        axs[i].grid()
+    #     axs[i].set_xlabel('Time')
+    #     axs[i].set_title(graph_info[i][1])
+    #     axs[i].grid()
+
+    x = np.arange(len(data))  # the label locations
+    width = 0.25  # the width of the bars
+    multiplier = 0
+
+    fig, ax = plt.subplots(layout='constrained')
+
+    for indicator, title in graph_info:
+        offset = width * multiplier
+        rects = ax.bar(x + offset, data[indicator], width, label=title)
+        #ax.bar_label(rects, padding=3)
+        multiplier += 1
+
+    # Add some text for labels, title and custom x-axis tick labels, etc.
+    
+    ax.set_title('Indicators by ANSP')
+    ax.set_xticks(x + width, data.index, rotation=90)
+    ax.legend(loc='upper left', ncols=3)
+    ax.grid()
+    
+
+    plt.show()
 
     
-    plt.show()
+
+    
+    
 

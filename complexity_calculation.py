@@ -1,18 +1,20 @@
 import pandas as pd
 
 
-def calculate_scores_daily(data):
+
+
+def calculate_scores_daily(data, vertsens = 1, hortsens = 1, speedsens = 1):
     #Calculate individual interaction scores and complexity score for each day
 
     #Adjusted density
     data["Adjusted_density"] = data["CPLX_INTER"] / data["CPLX_FLIGHT_HRS"] * 60
 
     #Vertical score
-    data["Vertical_score"] = data["VERTICAL_INTER_HRS"] / data["CPLX_INTER"]
+    data["Vertical_score"] = data["VERTICAL_INTER_HRS"] / data["CPLX_INTER"] * vertsens
 
-    data["Horizontal_score"] = data["HORIZ_INTER_HRS"] / data["CPLX_INTER"]
+    data["Horizontal_score"] = data["HORIZ_INTER_HRS"] / data["CPLX_INTER"] * hortsens
 
-    data["Speed_score"] = data["SPEED_INTER_HRS"] / data["CPLX_INTER"]
+    data["Speed_score"] = data["SPEED_INTER_HRS"] / data["CPLX_INTER"] * speedsens
 
     data["Structural_index"] = data["Vertical_score"] + data["Horizontal_score"] + data["Speed_score"]
 
@@ -88,15 +90,18 @@ def calculate_scores_yearly(data):
 
     return data
 
-def total_complexity_by_ANSP(data):
+def total_complexity_by_ANSP(data, vertsens = 1, hortsens = 1, speedsens = 1):
     
     data = data.groupby('ENTITY_NAME').sum(numeric_only = True)
 
     
 
-    data = calculate_scores_daily(data)
+    data = calculate_scores_daily(data, vertsens, hortsens, speedsens)
 
 
     data_ordered = data.sort_values(by=['Complexity_score'])
     return data_ordered
+
+
+
 
