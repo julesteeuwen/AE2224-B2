@@ -13,16 +13,16 @@ def make_new_DFs(file=file,sensi_parameter = 0.9):
     dataframe = pd.read_csv(file, index_col= 'FLT_DATE',parse_dates=True, date_format='%d-%m-%Y',delimiter=';').dropna()
     new_df = dataframe.copy()
     new_df['VERTICAL_INTER_HRS'] *= sensi_parameter
-    new_df.to_csv("Datasets/2017-2019_vertical_sensitivity.csv", index=False)
+    new_df.to_csv("Datasets/2017-2019_vertical_sensitivity.csv", index=True)
 
     new_df = dataframe.copy()
     new_df['HORIZ_INTER_HRS'] *= sensi_parameter
-    new_df.to_csv("Datasets/2017-2019_horizontal_sensitivity.csv", index=False)
+    new_df.to_csv("Datasets/2017-2019_horizontal_sensitivity.csv", index=True)
 
     new_df = dataframe.copy()
     new_df['SPEED_INTER_HRS'] *= sensi_parameter
-    new_df.to_csv("Datasets/2017-2019_speed_sensitivity.csv", index=False)
-
+    new_df.to_csv("Datasets/2017-2019_speed_sensitivity.csv", index=True)
+make_new_DFs(file,0.9)
 
 # calculate complexity score based on old dataframes
 def calculate_actual_complexity(file, ansps):
@@ -53,13 +53,21 @@ def plot_achtual_complexity(file, ansps):
 
 def plot_change_actual_complexity(file, ansps):
     cplx_old, ansps = calculate_actual_complexity(file, ansps)
-    cplx_verti, ansps = calculate_actual_complexity('test', ansps)
-    cplx_hori, ansps = calculate_actual_complexity('test', ansps)
-    cplx_speed, ansps = calculate_actual_complexity('test', ansps)
+    cplx_verti, ansps = calculate_actual_complexity('Datasets/2017-2019_vertical_sensitivity.csv', ansps)
+    cplx_hori, ansps = calculate_actual_complexity('Datasets/2017-2019_horizontal_sensitivity.csv', ansps)
+    cplx_speed, ansps = calculate_actual_complexity('Datasets/2017-2019_speed_sensitivity.csv', ansps)
     change_verti = cplx_old - cplx_verti
     change_hori = cplx_old - cplx_hori
     change_speed = cplx_old - cplx_speed
-    
+
+    print(change_verti, change_hori, change_speed)
+
+    ''''
+    penguin_means = {
+    'Bill Depth': (18.35, 18.43, 14.98),
+    'Bill Length': (38.79, 48.83, 47.50),
+    'Flipper Length': (189.95, 195.82, 217.19),
+}
     x = np.arange(len(ansps))  # the label locations
     width = 0.25  # the width of the bars
     multiplier = 0
@@ -80,6 +88,7 @@ def plot_change_actual_complexity(file, ansps):
     ax.set_ylim(0, 250)
 
     plt.show()
+    '''
 
 
 def plot_new_complexity(file, ansps):
@@ -91,3 +100,4 @@ def plot_new_complexity(file, ansps):
     plt.show()
 
 #execute the functions
+plot_change_actual_complexity(file, ansps)
