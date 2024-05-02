@@ -13,16 +13,16 @@ def make_new_DFs(file=file,sensi_parameter = 0.9):
     dataframe = pd.read_csv(file, index_col= 'FLT_DATE',parse_dates=True, date_format='%d-%m-%Y',delimiter=';').dropna()
     new_df = dataframe.copy()
     new_df['VERTICAL_INTER_HRS'] *= sensi_parameter
-    new_df.to_csv("Datasets/2017-2019_vertical_sensitivity.csv", index=False)
+    new_df.to_csv("Datasets/2017-2019_vertical_sensitivity.csv", index=True)
 
     new_df = dataframe.copy()
     new_df['HORIZ_INTER_HRS'] *= sensi_parameter
-    new_df.to_csv("Datasets/2017-2019_horizontal_sensitivity.csv", index=False)
+    new_df.to_csv("Datasets/2017-2019_horizontal_sensitivity.csv", index=True)
 
     new_df = dataframe.copy()
     new_df['SPEED_INTER_HRS'] *= sensi_parameter
-    new_df.to_csv("Datasets/2017-2019_speed_sensitivity.csv", index=False)
-
+    new_df.to_csv("Datasets/2017-2019_speed_sensitivity.csv", index=True)
+make_new_DFs(file,0.9)
 
 # calculate complexity score based on old dataframes
 def calculate_actual_complexity(file, ansps):
