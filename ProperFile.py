@@ -53,7 +53,6 @@ def get_mses():
         mses[asnp] = mean_squared_error(true, prediction)
     return mses    
 # #############################################################################
-#get the mses of the models
 
 #get the models
 SARIMA_models, EWMA_models = get_models()
