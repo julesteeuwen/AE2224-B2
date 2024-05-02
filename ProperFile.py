@@ -30,13 +30,13 @@ def get_models():
             if key not in EWMA_models:
                 EWMA_models[key] = get_EWMA(ASNP, field)
     return SARIMA_models, EWMA_models
-def  get_model(ASNP, field, model_type):
+def  get_model(ASNP, field, model_type,fake=False):
     if model_type == 'SARIMA':
         files = os.listdir(directory)
-        if ASNP + field + '.pkl' not in files:
+        if (ASNP + field +('Sens'if fake else '')+ '.pkl') not in files:
             return get_SARIMA(ASNP, field)
         else:
-            return joblib.load(f'{directory}/{ASNP + field + '.pkl'}')
+            return joblib.load(f'{directory}/{ASNP + field +('Sens'if fake else '')+ '.pkl'}')
     elif model_type == 'EWMA':
         return None
     else:

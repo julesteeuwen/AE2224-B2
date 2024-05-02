@@ -19,7 +19,7 @@ def get_test_data(ANSP, field,return_train=False):
         return train
     return test
 
-def get_SARIMA(ANSP, field,graph=False):
+def get_SARIMA(ANSP, field,graph=False,fake=False):
     print(f'Getting SARIMA model for {ANSP} and {field}')
     print('Wait a moment... or two.... or three...')
     # Load the data and split it into separate pieces
@@ -49,8 +49,10 @@ def get_SARIMA(ANSP, field,graph=False):
     '''
     # #############################################################################
     #save  the model to a file
-
-    joblib.dump(pipe, f'SARIMAS/{ANSP}{field}.pkl')
+    if not fake:
+        joblib.dump(pipe, f'SARIMAS/{ANSP}{field}.pkl')
+    else:
+        joblib.dump(pipe, f'SARIMAS/{ANSP}{field}Sens.pkl')
     print(f'SARIMA model for {ANSP} and {field} saved to SARIMAS/{ANSP}{field}.pkl')
     # #############################################################################
     if not graph:
