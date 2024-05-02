@@ -6,6 +6,7 @@ from Complexity import calc_complex
 from autoArima import get_SARIMA, get_test_data
 from sklearn.metrics import mean_absolute_percentage_error, mean_squared_error
 from EWMA import SMA
+import multiprocessing as mp
 fields = ['COMPLEXITY_SCORE','CPLX_FLIGHT_HRS','CPLX_INTER','VERTICAL_INTER_HRS','HORIZ_INTER_HRS','SPEED_INTER_HRS']
 #ASNPs = ['Skyguide','MUAC','DSNA']
 ASNPs = ['Albcontrol', 'NAVIAIR', 'LGS', 'Slovenia Control', 'MOLDATSA', 'LVNL', 'DSNA', 'LFV', 'LPS', 'ENAIRE', 'EANS', 'NATS (Continental)', 'Sakaeronavigatsia', 'ARMATS', 'NAV Portugal (Continental)', 'M-NAV', 'skeyes', 'DHMI', 'ENAV', 'DFS', 'DCAC Cyprus', 'HungaroControl', 'MUAC', 'Avinor (Continental)', 'SMATSA', 'ROMATSA', 'Skyguide', 'ANS Finland', 'Croatia Control', 'Oro Navigacija', 'HCAA', 'Austro Control', 'IAA', 'ANS CR', 'UkSATSE', 'MATS', 'PANSA', 'BULATSA']
@@ -124,9 +125,18 @@ def plot_complexity(asnp,n=365,parametered=True):
     plt.cla()
     #plt.show()
 
+def run_loop(ASNP):
+    files = os.listdir(directory)
+    for field in fields:
+            key = ASNP + field + '.pkl'
+            if key not in files:
+                get_SARIMA(ASNP, field)
+    
 # #############################################################################
 
 #get the models
+with mp.Pool(processes=4) as pool:
+        pool.map(run_loop, ASNPs)
 SARIMA_models, EWMA_models = get_models()
 
 for asnp in ASNPs:
