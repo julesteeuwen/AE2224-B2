@@ -8,15 +8,21 @@ import matplotlib.pyplot as plt
 file = 'Datasets/2017-2019.csv'
 ansps = ['Skyguide', 'MUAC', 'DSNA']
 # make new dataframes
-def make_new_DFs(file,sensi_parameter = 0.9):
+def make_new_DFs(file=file,sensi_parameter = 0.9):
     dataframe = pd.read_csv(file, index_col= 'FLT_DATE',parse_dates=True, date_format='%d-%m-%Y',delimiter=';').dropna()
-    dataframe_vert = dataframe['VERTICAL_INTER_HRS']*sensi_parameter
-    dataframe_hori = dataframe['HORIZ_INTER_HRS']*sensi_parameter
-    dataframe_speed = dataframe['SPEED_INTER_HRS']*sensi_parameter
-    dataframe_vert.to_csv('Datasets/2017-2019_sens_vert.csv', sep='\t')
-    dataframe_hori.to_csv('Datasets/2017-2019_sens_hori.csv', sep='\t')
-    dataframe_speed.to_csv('Datasets/2017-2019_sens_speed.csv', sep='\t')
- 
+    new_df = dataframe.copy()
+    new_df['VERTICAL_INTER_HRS'] *= sensi_parameter
+    new_df.to_csv("Datasets/2017-2019_vertical_sensitivity.csv", index=False)
+
+    new_df = dataframe.copy()
+    new_df['HORIZ_INTER_HRS'] *= sensi_parameter
+    new_df.to_csv("Datasets/2017-2019_horizontal_sensitivity.csv", index=False)
+
+    new_df = dataframe.copy()
+    new_df['SPEED_INTER_HRS'] *= sensi_parameter
+    new_df.to_csv("Datasets/2017-2019_speed_sensitivity.csv", index=False)
+
+
 # calculate complexity score based on old dataframes
 def calculate_old_complexity(file, ansps):
     df = pd.read_csv(file, index_col= 'FLT_DATE',parse_dates=True, date_format='%d-%m-%Y',delimiter=';').dropna()
