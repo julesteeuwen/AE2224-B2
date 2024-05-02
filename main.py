@@ -1,12 +1,12 @@
 from preprocessing import *
-from read_from_file import *
+# from read_from_file import *
 from complexity_calculation import calculate_scores_daily, calculate_scores_monthly, calculate_scores_yearly
-from AUTO_ARIMA import auto_ARIMA
+# from AUTO_ARIMA import auto_ARIMA
 
 
 
 
-TrafficData1 = read_data("Datasets/split_2014-2016.csv") #Change to choose CSV file
+TrafficData1 = read_data("Datasets/split_2017-2019.csv") #Change to choose CSV file
 
 # Initialise the variables
 selected_ansps = []
@@ -17,8 +17,6 @@ ANSPs = ANSPs(TrafficData1)
 ANSPs = cleanlist(ANSPs)
 ANSPsdf = split_data(TrafficData1, ANSPs)
 
-
-print(data)
 # data = calculate_scores_daily(data)
 # auto_ARIMA(data,"Complexity_score",plotting=True)
 if mutlipleseason:
