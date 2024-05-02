@@ -133,14 +133,15 @@ def run_loop(ASNP):
                 get_SARIMA(ASNP, field)
     
 # #############################################################################
-
-#get the models
-with mp.Pool(processes=4) as pool:
-        pool.map(run_loop, ASNPs)
-SARIMA_models, EWMA_models = get_models()
-
-for asnp in ASNPs:
-    plot_complexity(asnp,parametered=False)
-    plot_complexity(asnp,parametered=True)
-
-#SMA(df,7)
+if __name__ == '__main__':
+    #get the models
+    with mp.Pool(processes=4) as pool:
+            pool.map(run_loop, ASNPs)
+'''
+    SARIMA_models, EWMA_models = get_models()
+   
+    for asnp in ASNPs:
+        plot_complexity(asnp,parametered=False)
+        plot_complexity(asnp,parametered=True)
+'''
+    #SMA(df,7)
