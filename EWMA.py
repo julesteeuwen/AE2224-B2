@@ -94,6 +94,15 @@ plotting = True
 
 smoothing_period = 30
 
+def predict_ansp_HWES(ANSP, field, n):
+    model = None
+    try:
+        model = pickle.load(open(f"HWES_ADD/{ANSP}{field}.pkl", 'rb'))
+    except:
+        raise Exception(f"Model {ANSP}{field} not found")
+
+    return model.forecast(n)
+
 def run_loop(ANSP):
         predicted_values = pd.DataFrame()
         test_values = pd.DataFrame()

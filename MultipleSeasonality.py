@@ -75,6 +75,15 @@ def computeModel(df, ANSP, field, periods=[365,7]):
     pickle.dump(model, open(f"TBATS/{subfolder}/{ANSP}{field}.pkl", 'wb'))
     return model
 
+def predict_ansp_TBATS(ANSP, field, n):
+    model = None
+    try:
+        model = pickle.load(open(f"TBATS/YEAR_WEEK/{ANSP}{field}.pkl", 'rb'))
+    except:
+        raise Exception(f"Model {ANSP}{field} not found")
+
+    return model.predict(n)
+
 fields = ['CPLX_FLIGHT_HRS', 'CPLX_INTER', 'HORIZ_INTER_HRS', 'SPEED_INTER_HRS', 'VERTICAL_INTER_HRS', 'Complexity_score']
 ANSPs = ['ANS CR', 'ANS Finland', 'ARMATS', 'Albcontrol', 'Austro Control', 'Avinor (Continental)', 'BULATSA', 'Croatia Control', 'DCAC Cyprus', 'DFS', 'DHMI', 'DSNA', 'EANS', 'ENAIRE', 'ENAV', 'HCAA', 'HungaroControl', 'IAA', 'LFV', 'LGS', 'LPS', 'LVNL', 'M-NAV', 'MATS', 'MOLDATSA', 'MUAC', 'NATS (Continental)', 'NAV Portugal (Continental)', 'NAVIAIR', 'Oro Navigacija', 'PANSA', 'ROMATSA', 'SMATSA', 'Sakaeronavigatsia', 'Skyguide', 'Slovenia Control', 'UkSATSE', 'skeyes']
 plotting = False
