@@ -63,7 +63,6 @@ def get_mses(parametered=True):
     return mses  
 def get_mapes(parametered=True):
     #returns the mean squared errors of the models (SARIMA for each comp, SARIMA for the complexity score)
-    SARIMA_models, EWMA_models = get_models()
     n = len(get_test_data('Skyguide','CPLX_FLIGHT_HRS'))
     mapes = {}
     for asnp in ASNPs:
@@ -72,15 +71,21 @@ def get_mapes(parametered=True):
         for field in ['VERTICAL_INTER_HRS', 'HORIZ_INTER_HRS', 'SPEED_INTER_HRS', 'CPLX_INTER', 'CPLX_FLIGHT_HRS']:
             test_data[field] =get_test_data(asnp,field)
             if parametered:
-                predicted_data[field] = SARIMA_models[asnp + field+'.pkl'].predict(n_periods=n)
+                model = get_model(asnp, field, 'SARIMA')
+                predicted_data[field] = model.predict(n_periods=n)
         true = calc_complex(test_data)
+        prediction = 0
         if parametered:
             prediction = calc_complex(predicted_data)
-        prediction2 = SARIMA_models[asnp + 'COMPLEXITY_SCORE'+'.pkl'].predict(n_periods=n)
-        mapes[asnp] = mean_absolute_percentage_error(true, prediction) if parametered else mean_absolute_percentage_error(true, prediction2)
+        else:
+            model = get_model(asnp, 'COMPLEXITY_SCORE', 'SARIMA')
+            #prediction = SARIMA_models[asnp + 'COMPLEXITY_SCORE'+'.pkl'].predict(n_periods=n)
+            prediction = model.predict(n_periods=n)
+        mapes[asnp] = mean_absolute_percentage_error(true, prediction)
+
     return mapes
 
-def predict_complexity(asnp,n,fake=False,parametered=True):
+def predict_complexity(asnp,n,parametered=True):
     '''
     asnp: str
     n: int the number of days to predict the complexity for (2yrs+n days)
@@ -139,10 +144,24 @@ if __name__ == '__main__':
     #run the loop in parallel
 
 
-#get the models
+    #get the models
+    '''
     with mp.Pool(processes=8) as pool:
             pool.map(run_loop, ASNPs)
-# SARIMA_models, EWMA_models = get_models()
+            
+    '''
+    #SARIMA_models, EWMA_models = get_models()
+    #write mapes to csv
+    '''
+    print('lets go')
+    b=get_mapes(parametered=False)
+    print('halfway there')
+    c = get_mapes()
+    a={}
+    a = {a:[b[a],c[a]] for a in ASNPs}
+    '''
+    a = pd.from_csv('mapes.csv')
+    #a.values=[get_mapes(parametered=False).values, get_mapes().values]
 
 # for asnp in ASNPs:
 #     plot_complexity(asnp,parametered=False)
