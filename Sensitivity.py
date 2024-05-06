@@ -83,7 +83,8 @@ def plot_change_actual_complexity(file, ansps):
     plt.ylabel('Complexity score change(%)', fontweight ='bold', fontsize = 15) 
     plt.xticks([r + barWidth for r in range(len(change_verti))], ansps)
  
-    legend = plt.legend(loc='upper left', shadow=True, fancybox=True,bbox_to_anchor=(1, 0.6))
+    legend = plt.legend(loc='lower center', shadow=True, fancybox=True,bbox_to_anchor=(0.5, -0.3))
+
     #plt.setp(legend.get_title(), fontsize=30)
     plt.setp(legend.get_texts(), fontsize=25)
     plt.tight_layout()
