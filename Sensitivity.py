@@ -25,31 +25,43 @@ def make_new_DFs(file=file, sensi_parameter = 0.9):
 #make_new_DFs(file,0.9)
 
 # calculate complexity score based on old dataframes
-def calculate_actual_complexity(file, ansps):
+def calculate_actual_complexity(file, ansps, plotting = True):
     df = pd.read_csv(file, index_col= 'FLT_DATE',parse_dates=True, date_format='%d-%m-%Y',delimiter=',').dropna()
     df = df[df['ENTITY_NAME'].isin(ansps)]
     ansps = df['ENTITY_NAME'].unique()
     cplx = []
-    for ansp in ansps:
-        df_ansp = df[df['ENTITY_NAME'] == ansp]
-        VERTICAL_INTER_HRS = sum(df_ansp['VERTICAL_INTER_HRS'])
-        HORIZ_INTER_HRS = sum(df_ansp['HORIZ_INTER_HRS'])
-        SPEED_INTER_HRS = sum(df_ansp['SPEED_INTER_HRS'])
-        CPLX_FLIGHT_HRS = sum(df_ansp['CPLX_FLIGHT_HRS'])
+    if plotting:
+        for ansp in ansps:
+            df_ansp = df[df['ENTITY_NAME'] == ansp]
+            VERTICAL_INTER_HRS = sum(df_ansp['VERTICAL_INTER_HRS'])
+            HORIZ_INTER_HRS = sum(df_ansp['HORIZ_INTER_HRS'])
+            SPEED_INTER_HRS = sum(df_ansp['SPEED_INTER_HRS'])
+            CPLX_FLIGHT_HRS = sum(df_ansp['CPLX_FLIGHT_HRS'])
+            cplx_ansp = (VERTICAL_INTER_HRS + HORIZ_INTER_HRS + SPEED_INTER_HRS)*60 / CPLX_FLIGHT_HRS
+            cplx.append(cplx_ansp)
+    else:
+        df = df[df['ENTITY_NAME'] == 'Skyguide']
+        VERTICAL_INTER_HRS = df['VERTICAL_INTER_HRS']
+        HORIZ_INTER_HRS = df['HORIZ_INTER_HRS']
+        SPEED_INTER_HRS = df['SPEED_INTER_HRS']
+        CPLX_FLIGHT_HRS = df['CPLX_FLIGHT_HRS']
+        CPLX_INTER = df['CPLX_INTER']
+        Adj_Density = CPLX_INTER*60 / CPLX_FLIGHT_HRS
+        Struc_Index = (VERTICAL_INTER_HRS + HORIZ_INTER_HRS + SPEED_INTER_HRS) / CPLX_INTER
         cplx_ansp = (VERTICAL_INTER_HRS + HORIZ_INTER_HRS + SPEED_INTER_HRS)*60 / CPLX_FLIGHT_HRS
-        cplx.append(cplx_ansp)
+
+        plt.plot(df.index, cplx_ansp, label='Complexity score', color = 'tab:orange')  # Line plot
+        plt.plot(df.index, Adj_Density, label = 'Adjusted density', color = 'tab:green')
+        plt.plot(df.index, Struc_Index, label = 'Structural index', color = 'tab:blue')
+        plt.ylabel('score')  # Y-axis label
+        plt.legend()  # Show legend
+        plt.xticks(rotation=45)
+        plt.show()
+
     return cplx, ansps
+calculate_actual_complexity(file, ansps, plotting=False)
 
 
-
-# plot the results
-def plot_achtual_complexity(file, ansps):
-    cplx, ansps = calculate_actual_complexity(file, ansps)
-    fig, ax = plt.subplots()
-    bar_colors = ['tab:red', 'tab:blue', 'tab:green']
-    ax.bar(ansps, cplx, color=bar_colors)
-    ax.set_ylabel('Complexity score')
-    plt.show()
 
 def plot_change_actual_complexity(file, ansps):
     cplx_old, ansps = calculate_actual_complexity(file, ansps)
@@ -93,4 +105,4 @@ def plot_change_actual_complexity(file, ansps):
     
 
 #execute the functions
-plot_change_actual_complexity(file, ansps)
+#plot_change_actual_complexity(file, ansps)
