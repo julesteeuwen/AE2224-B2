@@ -54,19 +54,19 @@ def plot(asnp,field,method,n=365,parametered=True,overwrite=False):
     else:
         datatrain={}
         datatest={}
-        for field in ['VERTICAL_INTER_HRS', 'HORIZ_INTER_HRS', 'SPEED_INTER_HRS', 'CPLX_INTER', 'CPLX_FLIGHT_HRS']:
-            datatest[field] = get_test_data(asnp,field)
-            datatrain[field] = get_test_data(asnp,field,return_train=True)
+        for field1 in ['VERTICAL_INTER_HRS', 'HORIZ_INTER_HRS', 'SPEED_INTER_HRS', 'CPLX_INTER', 'CPLX_FLIGHT_HRS']:
+            datatest[field1] = get_test_data(asnp,field1)
+            datatrain[field1] = get_test_data(asnp,field1,return_train=True)
             ##################################################################################### FIX THIS
         if parametered:
             predicted_data={}
-            for field in ['VERTICAL_INTER_HRS', 'HORIZ_INTER_HRS', 'SPEED_INTER_HRS', 'CPLX_INTER', 'CPLX_FLIGHT_HRS']:
+            for field2 in ['VERTICAL_INTER_HRS', 'HORIZ_INTER_HRS', 'SPEED_INTER_HRS', 'CPLX_INTER', 'CPLX_FLIGHT_HRS']:
                 if method == 'ARIMA':
-                    predicted_data[field] = get_model(asnp,field,'SARIMA').predict(n_periods=n)
+                    predicted_data[field2] = get_model(asnp,field2,'SARIMA').predict(n_periods=n)
                 elif method == 'EWMA':
-                    predicted_data[field] = predict_ansp_HWES(asnp,field,n)
+                    predicted_data[field2] = predict_ansp_HWES(asnp,field2,n)
                 elif method == 'TBATS':
-                    predicted_data[field] = predict_ansp_TBATS(asnp,field,n)
+                    predicted_data[field2] = predict_ansp_TBATS(asnp,field2,n)
             #print(predicted_data)
             a= calc_complex(predicted_data)            
         else:
@@ -76,6 +76,7 @@ def plot(asnp,field,method,n=365,parametered=True,overwrite=False):
                 a = predict_ansp_HWES(asnp,'COMPLEXITY_SCORE',n)
             elif method == 'TBATS':
                 a = predict_ansp_TBATS(asnp,'COMPLEXITY_SCORE',n)
+
         #####################################################################################
         #a = pd.DataFrame(predict_complexity(asnp,n=n,parametered=parametered))
         a.index= pd.date_range(datatest['CPLX_INTER'].index[0], periods=len(a), freq="d")
@@ -131,6 +132,7 @@ def plot(asnp,field,method,n=365,parametered=True,overwrite=False):
     #save the plot
     n_actual = n-len(get_test_data('Skyguide','CPLX_FLIGHT_HRS'))
     test = ('_parametered' if parametered else '_not_parametered') if field == 'COMPLEXITY_SCORE' else ''
+    print('ansp', asnp, 'field: ', field, 'test: ', test)
     if not os.path.exists(f'GRAPHS/{asnp}(n={n_actual})'):
         os.mkdir(f'GRAPHS/{asnp}(n={n_actual})')
     if not os.path.exists(f'GRAPHS/{asnp}(n={n_actual})/{method}'):
@@ -141,11 +143,16 @@ def plot(asnp,field,method,n=365,parametered=True,overwrite=False):
     plt.close(fig)
     
 for asnp in ASNPs:
+    # plot(asnp,'COMPLEXITY_SCORE','ARIMA',n=0,parametered=False)
+    # plot(asnp,'COMPLEXITY_SCORE','EWMA',n=0,parametered=False)
+    plot(asnp,'COMPLEXITY_SCORE','TBATS',n=0,parametered=False)
     for field in fields:
-        plot(asnp,field,'ARIMA',n=0)
+        # plot(asnp,field,'ARIMA',n=0)
+        # plot(asnp,field,'EWMA',n=0)
+        plot(asnp,field,'TBATS',n=0)
         #break
     #break
-    plot(asnp,'COMPLEXITY_SCORE','ARIMA',n=0,parametered=False)
+
 
 #do complexity false
 
