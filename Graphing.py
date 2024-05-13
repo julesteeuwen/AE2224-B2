@@ -146,7 +146,7 @@ def plot(asnp,field,method,n=365,parametered=True,overwrite=False):
 for asnp in ASNPs:
     # plot(asnp,'COMPLEXITY_SCORE','ARIMA',n=0,parametered=False)
     # plot(asnp,'COMPLEXITY_SCORE','EWMA',n=0,parametered=False)
-    plot(asnp,'COMPLEXITY_SCORE','TBATS',n=0,parametered=True, overwrite=True)
+    plot(asnp,'COMPLEXITY_SCORE','TBATS',n=365,parametered=False, overwrite=True)
     # for field in fields:
         # plot(asnp,field,'ARIMA',n=0)
         # plot(asnp,field,'EWMA',n=0)
