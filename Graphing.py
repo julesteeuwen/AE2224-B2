@@ -66,9 +66,9 @@ def plot(asnp,field,method,n=365,parametered=True,overwrite=False):
                 elif method == 'EWMA':
                     predicted_data[field2] = predict_ansp_HWES(asnp,field2,n)
                 elif method == 'TBATS':
-                    predicted_data[field2] = predict_ansp_TBATS(asnp,field2,n)
-            #print(predicted_data)
-            a= calc_complex(predicted_data)            
+                    predicted_data[field2] = predict_ansp_TBATS(asnp,field2,n).squeeze()
+
+            a= calc_complex(predicted_data)
         else:
             if method == 'ARIMA':
                 a = get_model(asnp,'COMPLEXITY_SCORE','SARIMA').predict(n_periods=n)
@@ -142,14 +142,15 @@ def plot(asnp,field,method,n=365,parametered=True,overwrite=False):
     plt.cla()
     plt.close(fig)
     
+
 for asnp in ASNPs:
     # plot(asnp,'COMPLEXITY_SCORE','ARIMA',n=0,parametered=False)
     # plot(asnp,'COMPLEXITY_SCORE','EWMA',n=0,parametered=False)
-    plot(asnp,'COMPLEXITY_SCORE','TBATS',n=0,parametered=False)
-    for field in fields:
+    plot(asnp,'COMPLEXITY_SCORE','TBATS',n=365,parametered=False, overwrite=True)
+    # for field in fields:
         # plot(asnp,field,'ARIMA',n=0)
         # plot(asnp,field,'EWMA',n=0)
-        plot(asnp,field,'TBATS',n=0)
+        # plot(asnp,field,'TBATS',n=0)
         #break
     #break
 
