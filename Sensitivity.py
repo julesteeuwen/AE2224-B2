@@ -4,10 +4,12 @@ import pandas as pd
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
+from MultipleSeasonality import predict_ansp_TBATS
 
 #set default parameters
 file = 'Datasets/split_2017-2019.csv'
 ansps = ['Skyguide', 'MUAC', 'DSNA']
+n = 274
 # make new dataframes
 def make_new_DFs(file=file, sensi_parameter = 0.9):
     dataframe = pd.read_csv(file,parse_dates=True, index_col= 'YEAR', date_format='%d-%m-%Y',delimiter=',').dropna()
@@ -50,16 +52,21 @@ def calculate_actual_complexity(file, ansps, plotting = True):
         Struc_Index = (VERTICAL_INTER_HRS + HORIZ_INTER_HRS + SPEED_INTER_HRS) / CPLX_INTER
         cplx_ansp = (VERTICAL_INTER_HRS + HORIZ_INTER_HRS + SPEED_INTER_HRS)*60 / CPLX_FLIGHT_HRS
 
-        plt.plot(df.index, cplx_ansp, label='Complexity score', color = 'tab:orange')  # Line plot
-        plt.plot(df.index, Adj_Density, label = 'Adjusted density', color = 'tab:green')
-        plt.plot(df.index, Struc_Index, label = 'Structural index', color = 'tab:blue')
+        plt.plot(df.index, cplx_ansp, color = 'tab:blue')  # Line plot
+        #plt.plot(df.index, Adj_Density, label = 'Adjusted density', color = 'tab:green')
+        #plt.plot(df.index, Struc_Index, label = 'Structural index', color = 'tab:blue')
         plt.ylabel('score')  # Y-axis label
+        plt.xlabel('Date')  # X-axis label
         plt.legend()  # Show legend
         plt.xticks(rotation=45)
         plt.show()
 
     return cplx, ansps
-calculate_actual_complexity(file, ansps, plotting=False)
+
+def calculate_predicted_complexity(ansps, n ):
+    test = predict_ansp_TBATS('Skyguide', 'HORIZ_INTER_HRS' ,n)
+    print(test)
+
 
 
 
@@ -106,4 +113,4 @@ def plot_change_actual_complexity(file, ansps):
     
 
 #execute the functions
-#plot_change_actual_complexity(file, ansps)
+calculate_predicted_complexity('skyguide',n)
