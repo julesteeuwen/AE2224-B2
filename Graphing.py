@@ -111,7 +111,14 @@ def plot(asnp,field,method,n=365,parametered=True,overwrite=False):
 
     #set the axis labels
     ax1.set_xlabel('Date')
-    ax1.set_ylabel(field.replace('_',' ').title())
+    labels = {'VERTICAL_INTER_HRS': 'Vertical interaction hours',
+              'HORIZ_INTER_HRS': 'Horizontal interaction hours',
+              'SPEED_INTER_HRS': 'Speed interaction hours', 
+              'CPLX_INTER': 'Complex interactions', 
+              'CPLX_FLIGHT_HRS': 'Complexity flight hours',
+              'COMPLEXITY_SCORE': 'Complexity score'}
+    
+    ax1.set_ylabel(labels[field])
 
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%b'))
     # Rotates and right-aligns the x labels so they don't crowd each other.
@@ -122,12 +129,13 @@ def plot(asnp,field,method,n=365,parametered=True,overwrite=False):
     #make the y axis begin at 0
     ax1.set_ylim(0)
     #save the plot
+    n_actual = n-len(get_test_data('Skyguide','CPLX_FLIGHT_HRS'))
     test = ('_parametered' if parametered else '_not_parametered') if field == 'COMPLEXITY_SCORE' else ''
-    if not os.path.exists(f'GRAPHS/{asnp}(n={n})'):
-        os.mkdir(f'GRAPHS/{asnp}(n={n})')
-    if not os.path.exists(f'GRAPHS/{asnp}(n={n})/{method}'):
-        os.mkdir(f'GRAPHS/{asnp}(n={n})/{method}')
-    plt.savefig(f'GRAPHS/{asnp}(n={n-len(get_test_data('Skyguide','CPLX_FLIGHT_HRS'))})/{method}/{field}{test}.png',dpi=600,pad_inches=0.01,bbox_inches='tight')
+    if not os.path.exists(f'GRAPHS/{asnp}(n={n_actual})'):
+        os.mkdir(f'GRAPHS/{asnp}(n={n_actual})')
+    if not os.path.exists(f'GRAPHS/{asnp}(n={n_actual})/{method}'):
+        os.mkdir(f'GRAPHS/{asnp}(n={n_actual})/{method}')
+    plt.savefig(f'GRAPHS/{asnp}(n={n_actual})/{method}/{field}{test}.png',dpi=600,pad_inches=0.01,bbox_inches='tight')
     #plt.show()
     plt.cla()
     plt.close(fig)
