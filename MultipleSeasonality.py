@@ -81,7 +81,7 @@ def predict_ansp_TBATS(ANSP, field, n):
         model = pickle.load(open(f"TBATS/YEAR_WEEK/{ANSP}{field}.pkl", 'rb'))
     except:
         raise Exception(f"Model {ANSP}{field} not found")
-
+    n = np.arange(n)
     return model.predict(n)
 
 fields = ['CPLX_FLIGHT_HRS', 'CPLX_INTER', 'HORIZ_INTER_HRS', 'SPEED_INTER_HRS', 'VERTICAL_INTER_HRS', 'Complexity_score']

@@ -76,6 +76,7 @@ def plot(asnp,field,method,n=365,parametered=True,overwrite=False):
                 a = predict_ansp_HWES(asnp,'COMPLEXITY_SCORE',n)
             elif method == 'TBATS':
                 a = predict_ansp_TBATS(asnp,'COMPLEXITY_SCORE',n)
+
         #####################################################################################
         #a = pd.DataFrame(predict_complexity(asnp,n=n,parametered=parametered))
         a.index= pd.date_range(datatest['CPLX_INTER'].index[0], periods=len(a), freq="d")
@@ -142,10 +143,12 @@ def plot(asnp,field,method,n=365,parametered=True,overwrite=False):
     plt.close(fig)
     
 for asnp in ASNPs:
-    plot(asnp,'COMPLEXITY_SCORE','ARIMA',n=0,parametered=False)
+    # plot(asnp,'COMPLEXITY_SCORE','ARIMA',n=0,parametered=False)
+    # plot(asnp,'COMPLEXITY_SCORE','EWMA',n=0,parametered=False)
+    plot(asnp,'COMPLEXITY_SCORE','TBATS',n=0,parametered=False)
     for field in fields:
-        plot(asnp,field,'ARIMA',n=0)
-        plot(asnp,field,'EWMA',n=0)
+        # plot(asnp,field,'ARIMA',n=0)
+        # plot(asnp,field,'EWMA',n=0)
         plot(asnp,field,'TBATS',n=0)
         #break
     #break
